@@ -39,4 +39,19 @@ public class TestBoardCell {
 		this.occupied = occupied;
 	}
 	
+	public void getAdjacencies() {
+		//TODO update the set of adjacencies with this method
+		return;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+
+	public int getColumn() {
+		return column;
+	}
+	
+	
 }
