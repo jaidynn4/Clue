@@ -4,12 +4,11 @@ import java.util.*;
 
 
 public class TestBoard {
-	//private Map<TestBoardCell, Set<TestBoardCell>> board;	//The game board
-	private TestBoardCell[][] grid;
-	private Set<TestBoardCell> targets;						//List of possible cells to move to
-	private Set<TestBoardCell> visited;						//List of cells visited in movement path
-	final static int COLS = 4;
-	final static int ROWS = 4;
+	private TestBoardCell[][] grid;			//The game board
+	private Set<TestBoardCell> targets;		//List of possible cells to move to
+	private Set<TestBoardCell> visited;		//List of cells visited in movement path
+	final static int COLS = 4; 				// sets max width for test board
+	final static int ROWS = 4; 				// Sets max height for test board
 	
 	
 	//Construct a blank 4x4 test board
@@ -33,8 +32,30 @@ public class TestBoard {
 	
 	//Create the set of target cells - blank method stub
 	public void calcTargets(TestBoardCell startCell, int pathlength) {
-		//TODO algorithm with recursive function called inside to find all target cells
-		return;
+		visited.clear();
+		targets.clear();
+		visited.add(startCell);
+		//recursive call for going through roll size
+		findAllTargets(startCell, pathlength);
+	}
+	
+	private void findAllTargets(TestBoardCell startCell, int pathlength) {
+		for(TestBoardCell cell: startCell.getAdjList()) {
+			if(!visited.contains(cell)) {
+				visited.add(cell);
+				if(pathlength == 1) {
+					//final check for if the cell is occupied or a room before adding it to the list
+					if(!cell.isOccupied && !cell.isRoom) {
+						targets.add(cell);
+					}
+				} else {
+					//keep going until roll number is met
+					findAllTargets(cell, pathlength - 1);
+				}
+				//clear visited spot for next run
+				visited.remove(cell);
+			}
+		}
 	}
 	
 	//Getter for targets
