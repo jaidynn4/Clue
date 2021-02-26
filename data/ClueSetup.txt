@@ -1,0 +1,13 @@
+//Rooms and room cards
+Room, Engine Room, E
+Room, Docking Bay, D
+Room, Bridge, B
+Room, Maintenance, M
+Room, Armory, A
+Room, Trash Compactor, T
+Room, Navigation, N
+Room, Captain's Quarters, C
+Room, Mess Hall, H
+//other spaces on board
+Space, Unused, X
+Space, Walkway, W
