@@ -4,16 +4,18 @@ import java.util.*;
 
 public class TestBoardCell {
 	private int row;							//Row of this cell on the board
-	private int column;							//Column of this cell on the board
+	private int col;							//Column of this cell on the board
 	private Set<TestBoardCell> adjacencyList;	//Set of cells adjacent to this cell
 	boolean isRoom;								//Holds whether this cell is a room
-	boolean occupied;							//Holds whether this cell is occupied
+	boolean isOccupied;							//Holds whether this cell is occupied
+	private TestBoard board;					//Holds the game board that this cell belongs to
 	
 	//TestBoardCell constructor
-	public TestBoardCell(int row, int column) {
+	public TestBoardCell(int row, int column, TestBoard board) {
 		super();
 		this.row = row;
-		this.column = column;
+		this.col = column;
+		this.board = board;
 		this.adjacencyList = new HashSet<TestBoardCell>();
 	}
 	
@@ -39,17 +41,32 @@ public class TestBoardCell {
 
 	//Getter for isOccupied
 	public boolean isOccupied() {
-		return occupied;
+		return isOccupied;
 	}
 
 	//Setter for isOccupied
-	public void setOccupied(boolean occupied) {
-		this.occupied = occupied;
+	public void setIsOccupied(boolean occupied) {
+		this.isOccupied = occupied;
 	}
 	
-	//Create the adjacency list for this cell - a blank method stub
+	//Create the adjacency list for this cell
 	public void getAdjacencies() {
-		//TODO update the set of adjacencies with this method
+		//Check whether to add the cell to the west
+		if (this.col > 0) {
+			adjacencyList.add(board.getCell(this.row, this.col - 1));
+		}
+		//Check whether to add the cell to the east
+		if (this.col < TestBoard.COLS - 1) {
+			adjacencyList.add(board.getCell(this.row, this.col + 1));
+		}
+		//Check whether to add the cell to the north
+		if (this.row > 0) {
+			adjacencyList.add(board.getCell(this.row - 1, this.col));
+		}
+		//Check whether to add the cell to the south
+		if (this.row < TestBoard.ROWS - 1) {
+			adjacencyList.add(board.getCell(this.row + 1, this.col));
+		}
 		return;
 	}
 
@@ -60,7 +77,7 @@ public class TestBoardCell {
 
 	//Getter for column
 	public int getColumn() {
-		return column;
+		return col;
 	}
 	
 	
