@@ -42,12 +42,14 @@ public class TestBoard {
 	private void findAllTargets(TestBoardCell startCell, int pathlength) {
 		for(TestBoardCell cell: startCell.getAdjList()) {
 			if(!visited.contains(cell)) {
+				//Do not enter or pass cells occupied
+				if(cell.isOccupied) {
+					continue;
+				}
 				visited.add(cell);
-				if(pathlength == 1) {
-					//final check for if the cell is occupied or a room before adding it to the list
-					if(!cell.isOccupied && !cell.isRoom) {
+				if(pathlength == 1 || cell.isRoom()) {
+					//at end of roll length or if hitting a room, end and add to targets
 						targets.add(cell);
-					}
 				} else {
 					//keep going until roll number is met
 					findAllTargets(cell, pathlength - 1);

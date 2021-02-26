@@ -47,16 +47,14 @@ public class BoardTestsExp {
 	@Test
 	public void testTargetsMixed() {
 		boardToTest.getCell(0, 2).setIsOccupied(true);
-		boardToTest.getCell(2, 2).setIsRoom(true);
+		boardToTest.getCell(1, 2).setIsRoom(true);
 		TestBoardCell cell = boardToTest.getCell(0, 3);
 		boardToTest.calcTargets(cell, 3);
 		Set<TestBoardCell> targets = boardToTest.getTargets();
-		Assert.assertEquals(4,  targets.size());
-		Assert.assertTrue(targets.contains(boardToTest.getCell(0, 0)));
-		Assert.assertTrue(targets.contains(boardToTest.getCell(1, 1)));
+		Assert.assertEquals(3,  targets.size());
+		Assert.assertTrue(targets.contains(boardToTest.getCell(1, 2)));
+		Assert.assertTrue(targets.contains(boardToTest.getCell(2, 2)));
 		Assert.assertTrue(targets.contains(boardToTest.getCell(3, 3)));
-		Assert.assertTrue(targets.contains(boardToTest.getCell(1, 3)));
-		
 	}
 	
 	//starting top left, checks if targets correct for a roll of 1

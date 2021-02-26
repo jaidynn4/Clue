@@ -7,11 +7,11 @@ import java.util.Set;
 public class BoardCell {
 	private int row;							//Row of this cell on the board
 	private int col;							//Column of this cell on the board
-	private char initial;
-	private char secretPassage;
-	private boolean roomLabel;
-	private boolean roomCenter;
-	private DoorDirection doorDirection;
+	private char initial;						//The character representing the type of room that this cell belongs to
+	private char secretPassage;					//The destination of the secret passage, if one exists
+	private boolean roomLabel;					//Holds whether this cell is a room label
+	private boolean roomCenter;					//Holds whether this cell is a room center
+	private DoorDirection doorDirection;		//Holds the direction of a door from the enum class DoorDirection
 	private Set<BoardCell> adjacencyList;		//Set of cells adjacent to this cell
 	boolean isRoom;								//Holds whether this cell is a room
 	boolean isOccupied;							//Holds whether this cell is occupied
@@ -85,7 +85,35 @@ public class BoardCell {
 		return col;
 	}
 	
+	//Add an additional adjacent space - used for secret passage linking
 	public void addAdj (BoardCell adj) {
 		//TODO method stub
 	}
+	
+	//Check if the cell is a doorway
+	public boolean isDoorway() {
+		//TODO Method Stub
+		return false;
+	}
+	
+	//Check if the cell is a label
+	public boolean isLabel() {
+		return roomLabel;
+	}
+	
+	//Check if the cell is a room center
+	public boolean isRoomCenter() {
+		return roomCenter;
+	}
+	
+	//Check the direction of the door in a cell
+	public DoorDirection getDoorDirection() {
+		return doorDirection;
+	}
+	
+	//Check if the room is a secret passage
+	public Character getSecretPassage() {
+		return secretPassage;
+	}
+	
 }

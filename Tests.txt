@@ -1,0 +1,13 @@
+We reviewed our layout and changed all the locations from 306 tests to our own and changed names/symbols to be our own as well.
+
+We also added a check that there were 9 room types by checking for 9 center cells on the board.
+
+For door facing left we chose the Mess Hall door as it clearly faces left
+For right facing we chose docking bay as it is a prominent right facing door
+For down we chose armory as it has a down door
+for up we chose armory as well as it also has an up door
+
+For room types we selected a few random rooms from our own list and modified locations accordingly.
+
+We chose the captain's quarters to trash compactor as our secret passage because it seemed like the most fun one.
+
