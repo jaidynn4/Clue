@@ -130,7 +130,7 @@ public class FileInitTest {
 		cell = board.getCell(26, 11);
 		room = board.getRoom( cell ) ;
 		assertTrue( room != null );
-		assertEquals( room.getName(), "Mess Hall" ) ;
+		assertEquals( room.getName(), "Maintenance" ) ;
 		assertTrue( cell.isRoomCenter() );
 		assertTrue( room.getCenterCell() == cell );
 

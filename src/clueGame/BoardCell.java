@@ -29,6 +29,34 @@ public class BoardCell {
 		adjacencyList.add(cell);
 	}
 	
+	public char getInitial() {
+		return initial;
+	}
+
+	public void setInitial(char initial) {
+		this.initial = initial;
+	}
+
+	public void setSecretPassage(char secretPassage) {
+		this.secretPassage = secretPassage;
+	}
+
+	public boolean isRoomLabel() {
+		return roomLabel;
+	}
+
+	public void setRoomLabel(boolean roomLabel) {
+		this.roomLabel = roomLabel;
+	}
+
+	public void setRoomCenter(boolean roomCenter) {
+		this.roomCenter = roomCenter;
+	}
+
+	public void setDoorDirection(DoorDirection doorDirection) {
+		this.doorDirection = doorDirection;
+	}
+
 	//Getter for  adjacencyList
 	public Set<BoardCell> getAdjList() {
 		return adjacencyList;
@@ -92,8 +120,10 @@ public class BoardCell {
 	
 	//Check if the cell is a doorway
 	public boolean isDoorway() {
-		//TODO Method Stub
-		return false;
+		if(doorDirection == DoorDirection.NONE) {
+			return false;
+		}
+		return true;
 	}
 	
 	//Check if the cell is a label
