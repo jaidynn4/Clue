@@ -13,7 +13,7 @@ public class BoardCell {
 	private boolean roomCenter;					//Holds whether this cell is a room center
 	private DoorDirection doorDirection;		//Holds the direction of a door from the enum class DoorDirection
 	private Set<BoardCell> adjacencyList;		//Set of cells adjacent to this cell
-	boolean isRoom;								//Holds whether this cell is a room
+	boolean isPartOfRoom;						//Holds whether this cell is a room
 	boolean isOccupied;							//Holds whether this cell is occupied
 	
 	//TestBoardCell constructor
@@ -29,30 +29,37 @@ public class BoardCell {
 		adjacencyList.add(cell);
 	}
 	
+	//Getter for the initial of this cell
 	public char getInitial() {
 		return initial;
 	}
 
+	//Setter for the initial of this cell
 	public void setInitial(char initial) {
 		this.initial = initial;
 	}
 
+	//Setter for secret passage 
 	public void setSecretPassage(char secretPassage) {
 		this.secretPassage = secretPassage;
 	}
 
+	//Tests if this cell is a room label
 	public boolean isRoomLabel() {
 		return roomLabel;
 	}
 
+	//Setter for roomLabel
 	public void setRoomLabel(boolean roomLabel) {
 		this.roomLabel = roomLabel;
 	}
 
+	//Setter for roomCenter
 	public void setRoomCenter(boolean roomCenter) {
 		this.roomCenter = roomCenter;
 	}
 
+	//Setter for DoorDirection
 	public void setDoorDirection(DoorDirection doorDirection) {
 		this.doorDirection = doorDirection;
 	}
@@ -63,13 +70,13 @@ public class BoardCell {
 	}
 
 	//Getter for isRoom
-	public boolean isRoom() {
-		return isRoom;
+	public boolean isPartOfRoom() {
+		return isPartOfRoom;
 	}
 
 	//Setter for isRoom
-	public void setIsRoom(boolean isRoom) {
-		this.isRoom = isRoom;
+	public void setIsPartOfRoom(boolean isRoom) {
+		this.isPartOfRoom = isRoom;
 	}
 
 	//Getter for isOccupied

@@ -28,23 +28,19 @@ public class Board {
 		return theInstance;
 	}
 	
-	//Initialize the board
+	//Initialize the game board
 	public void initialize() {
+		//Create new data structures for the instance variables
 		this.targets = new HashSet<BoardCell>();
 		this.visited = new HashSet<BoardCell>();
 		this.roomMap = new HashMap<Character, Room>();
-		
-		//stub board made to make the tests fail without error
-//		grid = new BoardCell[32][25];
-//		for(int i = 0; i < 32; i++) {
-//			for(int j = 0; j < 25; j++) {
-//				BoardCell temp = new BoardCell(i,j);
-//				grid[i][j] = temp;
-//			}
-//		}
-		loadSetupConfig();
-		loadLayoutConfig();
-
+		//Load the files with the game board information and handle any exceptions thrown
+		try {
+			loadSetupConfig();
+			loadLayoutConfig();
+		} catch (BadConfigFormatException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	//Create the set of target cells - blank method stub
@@ -52,7 +48,7 @@ public class Board {
 		visited.clear();
 		targets.clear();
 		visited.add(startCell);
-		//recursive call for going through roll size
+		//recursive call for going through die roll size
 		findAllTargets(startCell, pathlength);
 	}
 	
@@ -65,11 +61,11 @@ public class Board {
 					continue;
 				}
 				visited.add(cell);
-				if(pathlength == 1 || cell.isRoom()) {
-					//if at a room or end of roll length, add to targets
+				if(pathlength == 1 || cell.isPartOfRoom()) {
+					//if at a room or end of die roll length, add to targets
 						targets.add(cell);
 				} else {
-					//keep going until roll number is met
+					//keep going until die roll number is met
 					findAllTargets(cell, pathlength - 1);
 				}
 				//clear visited spot for next run
@@ -108,18 +104,34 @@ public class Board {
 		this.numColumns = numColumns;
 	}
 	
-	public void loadSetupConfig() {
+	//Load the Setup file
+	public void loadSetupConfig() throws BadConfigFormatException {
 		try {
-			//TODO need to change to check for room or space directly by name
 			FileReader reader = new FileReader(setupConfigFile);
 			Scanner scan = new Scanner(reader);
+			//While the file has another line, read in the line
 			while(scan.hasNext()) {
 				String in = scan.nextLine();
+				//If the line is a comment, ignore it and move on to the next line
 				if(in.contains("//")) {
 					continue;
 				}
+				//Create an array for each entry in the line
 				String[] data = in.split(", ");
-				Room temp = new Room(data[1], data[0].equals("Space"));
+				//Throw an exception if there are more than 3 entries in the line
+				if(data.length != 3) {
+					throw new BadConfigFormatException("Invalid setup, each room needs a type, a name, and an icon");
+				}
+				//Throw an exception if the first entry is invalid
+				if(!data[0].equals("Space") && !data[0].equals("Room")) {
+					throw new BadConfigFormatException("Invalid type of cell - Needs to be Room or Space");
+				}
+				//Throw an exception if the room icon is not a single character
+				if(data[2].length() != 1) {
+					throw new BadConfigFormatException("Invalid room icon - Needs to be a single character");
+				}
+				//If we survived all that rigorous error testing, create a new room matching the data line.
+				Room temp = new Room(data[1], data[0].equals("Room"));
 				this.roomMap.put(data[2].charAt(0), temp);
 			}
 		} catch (FileNotFoundException e) {
@@ -127,33 +139,57 @@ public class Board {
 		}
 	}
 	
-	public void loadLayoutConfig() {
+	//Load the layout file
+	public void loadLayoutConfig() throws BadConfigFormatException {
 		try {
 			FileReader reader = new FileReader(layoutConfigFile);
 			Scanner scan = new Scanner(reader);
 			String layout = "";
 			numRows = 0;
 			numColumns = 0;
+			// While we have lines in the file, keep reading in and collect row/column sizes
 			while(scan.hasNext()) {
 				if (numRows != 0) {
 					layout += ",";
 				}
 				numRows++;
 				String in = scan.nextLine();
+				String[] tempData = in.split(",");
+				if (numColumns == 0) {
+					numColumns = tempData.length;
+				}
+				else {
+					//if column size is not consistent throughout, throw exception for config file
+					if (numColumns != tempData.length) {
+						throw new BadConfigFormatException("Improper column sizes - check your file entries");
+					}
+				}
 				layout += in;
 			}
+			//turn the scan into separated data we can read into our board with a split
 			String[] data = layout.split(",");
-			numColumns = data.length / numRows;
+			for (String entry: data) {
+				//if an entry in the data has weird info for a cell, throw exception
+				if (entry.length() > 2) {
+					throw new BadConfigFormatException("Improper entry in file - ensure that each cell contains no more than 2 characters");
+				}
+			}
 			int index = 0;
 			grid = new BoardCell[numRows][numColumns];
+			// loop through our grid that was just allocated and make a cell for each spot based on our data, setting flags and such as needed.
 			for(int i = 0; i < numRows; i++) {
 				for(int j =0; j < numColumns; j++) {
 					grid[i][j] = new BoardCell(i,j);
 					grid[i][j].setDoorDirection(DoorDirection.NONE);
-	//if icon not in map, throw exception here
 					char icon = data[index].charAt(0);
+					//If the room icon for a data set is not in our room map from setup, throw an exception
+					if(!roomMap.keySet().contains(icon)) {
+						throw new BadConfigFormatException("Mismatched Icon for Room passed, does not match setup file.");
+					}
+					//If the cell contains more than 1 character, use a switch statement to determine what to do with the 2nd character
 					if (data[index].length() > 1) {
 						char special = data[index].charAt(1);
+						//This switch statement grabs the second character in the map data and compares it to a list of options to set various types of flags
 						switch(special) {
 							case '#':
 								grid[i][j].setRoomLabel(true);
@@ -176,12 +212,21 @@ public class Board {
 								grid[i][j].setDoorDirection(DoorDirection.LEFT);
 								break;
 							default:
-								grid[i][j].setSecretPassage(special);
+								//If none of the above cases are true, the character represents a secret passage.
+								if(roomMap.keySet().contains(special)) {
+									grid[i][j].setSecretPassage(special);
+								}
+								//Throw an exception if the character for the secret passage does not correspond to a room
+								else {
+									throw new BadConfigFormatException("Unrecognized special character, see room keys and review setup file.");
+								}
+								
 								break;
 						}
 					}
+					//Set the icon and status of the cell
 					grid[i][j].setInitial(icon);
-					grid[i][j].setIsRoom(!roomMap.get(icon).getIsSpace());
+					grid[i][j].setIsPartOfRoom(roomMap.get(icon).getIsRoom());
 					index++;
 				}
 			}
@@ -191,6 +236,7 @@ public class Board {
 		}
 	}
 	
+	//Sets the chosen files for the project in the instance variables.
 	public void setConfigFiles(String layout, String setup) {
 		this.layoutConfigFile = "./data/" + layout;
 		this.setupConfigFile = "./data/" + setup;
