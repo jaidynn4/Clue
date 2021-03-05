@@ -29,11 +29,11 @@ public class BoardAdjTargetTest {
 	// Ensure that player does not move around within room
 	@Test
 	public void testAdjacenciesRooms() {
-		//Starting with the Captain's Quarters, as it has 1 door and a secret passage
-		Set<BoardCell> testList = board.getAdjList(1, 2);
+		//Starting with Navigation, as it has 1 door and a secret passage
+		Set<BoardCell> testList = board.getAdjList(2, 22);
 		assertEquals(2, testList.size());
-		assertTrue(testList.contains(board.getCell(3, 5)));
-		assertTrue(testList.contains(board.getCell(29, 22)));
+		assertTrue(testList.contains(board.getCell(20, 1)));
+		assertTrue(testList.contains(board.getCell(5, 23)));
 		
 		//Now test Engine Room which has 3 doors, but no secret passage
 		testList = board.getAdjList(30, 9);
@@ -69,13 +69,13 @@ public class BoardAdjTargetTest {
 		assertTrue(testList.contains(board.getCell(25, 23)));
 		assertTrue(testList.contains(board.getCell(16, 20)));
 		
-		//Check the door at the top of Maintenance
-		testList = board.getAdjList(23, 11);
+		//Check the door to Navigation
+		testList = board.getAdjList(5, 23);
 		assertEquals(4, testList.size());
-		assertTrue(testList.contains(board.getCell(26, 11)));
-		assertTrue(testList.contains(board.getCell(23, 10)));
-		assertTrue(testList.contains(board.getCell(23, 12)));
-		assertTrue(testList.contains(board.getCell(22, 11)));
+		assertTrue(testList.contains(board.getCell(2, 22)));
+		assertTrue(testList.contains(board.getCell(5, 22)));
+		assertTrue(testList.contains(board.getCell(4, 23)));
+		assertTrue(testList.contains(board.getCell(6, 23)));
 	}
 	
 	// Test a variety of walkway scenarios
@@ -120,7 +120,7 @@ public class BoardAdjTargetTest {
 		assertTrue(targets.contains(board.getCell(17, 3)));	
 		
 		// test a roll of 3
-		board.calcTargets(board.getCell(20, 24), 3);
+		board.calcTargets(board.getCell(20, 4), 3);
 		targets= board.getTargets();
 		assertEquals(13, targets.size());
 		assertTrue(targets.contains(board.getCell(17, 1)));
@@ -129,7 +129,7 @@ public class BoardAdjTargetTest {
 		assertTrue(targets.contains(board.getCell(23, 4)));	
 		
 		// test a roll of 4
-		board.calcTargets(board.getCell(20, 24), 4);
+		board.calcTargets(board.getCell(20, 4), 4);
 		targets= board.getTargets();
 		assertEquals(20, targets.size());
 		assertTrue(targets.contains(board.getCell(24, 4)));

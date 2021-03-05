@@ -62,7 +62,7 @@ public class FileInitTest {
 	// These cells are white on the planning spreadsheet
 	@Test
 	public void FourDoorDirections() {
-		BoardCell cell = board.getCell(11, 7);
+		BoardCell cell = board.getCell(3, 18);
 		assertTrue(cell.isDoorway());
 		assertEquals(DoorDirection.LEFT, cell.getDoorDirection());
 		cell = board.getCell(22, 3);
@@ -127,10 +127,10 @@ public class FileInitTest {
 		assertTrue( room.getLabelCell() == cell );
 
 		// this is a room center cell to test
-		cell = board.getCell(26, 11);
+		cell = board.getCell(3, 12);
 		room = board.getRoom( cell ) ;
 		assertTrue( room != null );
-		assertEquals( room.getName(), "Maintenance" ) ;
+		assertEquals( room.getName(), "Bridge" ) ;
 		assertTrue( cell.isRoomCenter() );
 		assertTrue( room.getCenterCell() == cell );
 
