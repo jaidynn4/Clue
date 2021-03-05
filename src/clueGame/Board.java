@@ -104,6 +104,12 @@ public class Board {
 		this.numColumns = numColumns;
 	}
 	
+	//Sets the chosen files for the project in the instance variables.
+	public void setConfigFiles(String layout, String setup) {
+		this.layoutConfigFile = "./data/" + layout;
+		this.setupConfigFile = "./data/" + setup;
+	}
+	
 	//Load the Setup file
 	public void loadSetupConfig() throws BadConfigFormatException {
 		try {
@@ -236,12 +242,6 @@ public class Board {
 		}
 	}
 	
-	//Sets the chosen files for the project in the instance variables.
-	public void setConfigFiles(String layout, String setup) {
-		this.layoutConfigFile = "./data/" + layout;
-		this.setupConfigFile = "./data/" + setup;
-	}
-	
 	//Getter for the room character
 	public Room getRoom(Character icon) {
 		return roomMap.get(icon);
@@ -250,5 +250,9 @@ public class Board {
 	//Getter for the full room object
 	public Room getRoom(BoardCell cell) {
 		return roomMap.get(cell.getInitial());
+	}
+	
+	public Set<BoardCell> getAdjList(int x, int y) {
+		return this.getCell(x,y).getAdjList();
 	}
 }

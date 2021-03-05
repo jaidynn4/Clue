@@ -85,7 +85,7 @@ public class BoardCell {
 	}
 
 	//Setter for isOccupied
-	public void setIsOccupied(boolean occupied) {
+	public void setOccupied(boolean occupied) {
 		this.isOccupied = occupied;
 	}
 	
@@ -152,5 +152,6 @@ public class BoardCell {
 	public Character getSecretPassage() {
 		return secretPassage;
 	}
+
 	
 }
