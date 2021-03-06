@@ -21,14 +21,122 @@ public class BoardCell {
 		super();
 		this.row = row;
 		this.col = column;
+		this.secretPassage = '!';
 		this.adjacencyList = new HashSet<BoardCell>();
 	}
 	
+	
+	//Create the adjacency list for this cell
+	public void getAdjacencies() {
+		//Check whether to add the cell to the west
+		Board theBoard = Board.getInstance();
+		if (this.col > 0) {
+			if (getAdjacent(this, theBoard.getCell(row, col - 1), DoorDirection.LEFT)) {
+				adjacencyList.add(theBoard.getCell(row, col - 1));
+			}
+		}
+		//Check whether to add the cell to the east
+		if (this.col < theBoard.getNumColumns() - 1){
+			if( getAdjacent(this, theBoard.getCell(row, col + 1), DoorDirection.RIGHT)) {
+				adjacencyList.add(theBoard.getCell(row, col + 1));
+			}
+		}
+		//Check whether to add the cell to the north
+		if (this.row > 0) {
+			if(getAdjacent(this, theBoard.getCell(row - 1, col), DoorDirection.UP)) {
+				adjacencyList.add(theBoard.getCell(row - 1, col));
+			}
+		}
+		//Check whether to add the cell to the south
+		if (this.row < theBoard.getNumRows() - 1) {
+			if(getAdjacent(this, theBoard.getCell(row + 1, col), DoorDirection.DOWN)) {
+				adjacencyList.add(theBoard.getCell(row + 1, col));
+			}
+		}
+		return;
+	}
+	
+	
+	
+	//A helper method used for getAdjacencies
+	public boolean getAdjacent(BoardCell currentCell, BoardCell cellToCheck, DoorDirection door) {
+		Board theBoard = Board.getInstance();
+		
+		//false if unused
+		if (cellToCheck.getInitial() == 'X') {
+			return false;
+		}
+		
+		//if the cell's door direction matches the specified door direction, link it to the room center
+		if (currentCell.doorDirection == door) {
+			Room currentRoom = theBoard.getRoom(cellToCheck.getInitial());
+			adjacencyList.add(currentRoom.getCenterCell());
+			currentRoom.getCenterCell().addAdjacency(currentCell);
+			return false;
+		}
+		
+		//if the room is a secret passage indicator, add the secret passage room's center cell to the
+		//adjacency list of the current room's center cell
+		if (currentCell.secretPassage != '!') {
+			Room currentRoom = theBoard.getRoom(currentCell.getInitial());
+			Room passageRoom = theBoard.getRoom(currentCell.secretPassage);
+			currentRoom.getCenterCell().addAdjacency(passageRoom.getCenterCell());
+			return false;
+		}
+		//false if cell is a room
+		if (currentCell.isPartOfRoom()) {
+			return false;
+		}
+
+		if (cellToCheck.isPartOfRoom()) {
+			return false;
+		}
+		return true;
+	}
+
 	//Update the adjacencyList with a cell
 	public void addAdjacency(BoardCell cell) {
 		adjacencyList.add(cell);
 	}
+		
+	//Getter for row
+	public int getRow() {
+		return row;
+	}
+
+	//Getter for column
+	public int getColumn() {
+		return col;
+	}
 	
+	//Check if the cell is a doorway
+	public boolean isDoorway() {
+		if(doorDirection == DoorDirection.NONE) {
+			return false;
+		}
+		return true;
+	}
+	
+	//Check if the cell is a label
+	public boolean isLabel() {
+		return roomLabel;
+	}
+	
+	//Check if the cell is a room center
+	public boolean isRoomCenter() {
+		return roomCenter;
+	}
+	
+	//Check the direction of the door in a cell
+	public DoorDirection getDoorDirection() {
+		return doorDirection;
+	}
+	
+	//Check if the room is a secret passage
+	public Character getSecretPassage() {
+		return secretPassage;
+	}
+
 	//Getter for the initial of this cell
 	public char getInitial() {
 		return initial;
@@ -88,70 +196,4 @@ public class BoardCell {
 	public void setOccupied(boolean occupied) {
 		this.isOccupied = occupied;
 	}
-	
-	//Create the adjacency list for this cell
-	public void getAdjacencies() {
-		//Check whether to add the cell to the west
-		if (this.col > 0) {
-			adjacencyList.add(Board.getInstance().getCell(this.row, this.col - 1));
-		}
-		//Check whether to add the cell to the east
-		if (this.col < Board.getInstance().getNumColumns() - 1) {
-			adjacencyList.add(Board.getInstance().getCell(this.row, this.col + 1));
-		}
-		//Check whether to add the cell to the north
-		if (this.row > 0) {
-			adjacencyList.add(Board.getInstance().getCell(this.row - 1, this.col));
-		}
-		//Check whether to add the cell to the south
-		if (this.row < Board.getInstance().getNumRows() - 1) {
-			adjacencyList.add(Board.getInstance().getCell(this.row + 1, this.col));
-		}
-		return;
-	}
-
-	//Getter for row
-	public int getRow() {
-		return row;
-	}
-
-	//Getter for column
-	public int getColumn() {
-		return col;
-	}
-	
-	//Add an additional adjacent space - used for secret passage linking
-	public void addAdj (BoardCell adj) {
-		//TODO method stub
-	}
-	
-	//Check if the cell is a doorway
-	public boolean isDoorway() {
-		if(doorDirection == DoorDirection.NONE) {
-			return false;
-		}
-		return true;
-	}
-	
-	//Check if the cell is a label
-	public boolean isLabel() {
-		return roomLabel;
-	}
-	
-	//Check if the cell is a room center
-	public boolean isRoomCenter() {
-		return roomCenter;
-	}
-	
-	//Check the direction of the door in a cell
-	public DoorDirection getDoorDirection() {
-		return doorDirection;
-	}
-	
-	//Check if the room is a secret passage
-	public Character getSecretPassage() {
-		return secretPassage;
-	}
-
-	
 }

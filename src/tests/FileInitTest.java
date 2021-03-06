@@ -1,7 +1,7 @@
 package tests;
 
 /*
- * This program tests that config files are loaded properly.
+ * This program tests that config files are git lloaded properly.
  */
 
 // Doing a static import allows me to write assertEquals rather than

@@ -38,71 +38,16 @@ public class Board {
 		try {
 			loadSetupConfig();
 			loadLayoutConfig();
+			for(BoardCell[] cells: grid) {
+				for(BoardCell cell: cells) {
+					cell.getAdjacencies();
+				}
+			}
 		} catch (BadConfigFormatException e) {
 			System.out.println(e.getMessage());
 		}
 	}
 	
-	//Create the set of target cells - blank method stub
-	public void calcTargets(BoardCell startCell, int pathlength) {
-		visited.clear();
-		targets.clear();
-		visited.add(startCell);
-		//recursive call for going through die roll size
-		findAllTargets(startCell, pathlength);
-	}
-	
-	//Recursive function called by calcTargets
-	private void findAllTargets(BoardCell startCell, int pathlength) {
-		for(BoardCell cell: startCell.getAdjList()) {
-			if(!visited.contains(cell)) {
-				//do not enter cell or pass through if occupied
-				if(cell.isOccupied) {
-					continue;
-				}
-				visited.add(cell);
-				if(pathlength == 1 || cell.isPartOfRoom()) {
-					//if at a room or end of die roll length, add to targets
-						targets.add(cell);
-				} else {
-					//keep going until die roll number is met
-					findAllTargets(cell, pathlength - 1);
-				}
-				//clear visited spot for next run
-				visited.remove(cell);
-			}
-		}
-	}
-	
-	//Getter for targets
-	public Set<BoardCell> getTargets() {
-		return targets;
-	}
-	
-	//Getter for a specific cell within the board
-	public BoardCell getCell(int row, int col) {
-		return grid[row][col];
-	}
-
-	//Getter for the number of rows
-	public int getNumRows() {
-		return numRows;
-	}
-
-	//Setter for the number of rows
-	public void setNumRows(int numRows) {
-		this.numRows = numRows;
-	}
-
-	//Getter for the number of columns
-	public int getNumColumns() {
-		return numColumns;
-	}
-
-	//Setter for the number of columns
-	public void setNumColumns(int numColumns) {
-		this.numColumns = numColumns;
-	}
 	
 	//Sets the chosen files for the project in the instance variables.
 	public void setConfigFiles(String layout, String setup) {
@@ -242,6 +187,39 @@ public class Board {
 		}
 	}
 	
+	//Create the set of target cells - blank method stub
+	public void calcTargets(BoardCell startCell, int pathlength) {
+		visited.clear();
+		targets.clear();
+		visited.add(startCell);
+		//recursive call for going through die roll size
+		findAllTargets(startCell, pathlength);
+	}
+	
+	//Recursive function called by calcTargets
+	private void findAllTargets(BoardCell startCell, int pathlength) {
+		for(BoardCell cell: startCell.getAdjList()) {
+			if(!visited.contains(cell)) {
+				//do not enter cell or pass through if it is occupied, unless it is the center of a room
+				if(cell.isOccupied && !cell.isRoomCenter()) {
+					continue;
+				}
+				visited.add(cell);
+				if(pathlength == 1 || cell.isPartOfRoom()) {
+					//if at a room or end of die roll length, add to targets
+						targets.add(cell);
+				} else {
+					//keep going until die roll number is met
+					findAllTargets(cell, pathlength - 1);
+				}
+				//clear visited spot for next run
+				visited.remove(cell);
+			}
+		}
+	}
+	
+	
+	
 	//Getter for the room character
 	public Room getRoom(Character icon) {
 		return roomMap.get(icon);
@@ -254,5 +232,34 @@ public class Board {
 	
 	public Set<BoardCell> getAdjList(int x, int y) {
 		return this.getCell(x,y).getAdjList();
+	}
+	//Getter for targets
+	public Set<BoardCell> getTargets() {
+		return targets;
+	}
+	
+	//Getter for a specific cell within the board
+	public BoardCell getCell(int row, int col) {
+		return grid[row][col];
+	}
+
+	//Getter for the number of rows
+	public int getNumRows() {
+		return numRows;
+	}
+
+	//Setter for the number of rows
+	public void setNumRows(int numRows) {
+		this.numRows = numRows;
+	}
+
+	//Getter for the number of columns
+	public int getNumColumns() {
+		return numColumns;
+	}
+
+	//Setter for the number of columns
+	public void setNumColumns(int numColumns) {
+		this.numColumns = numColumns;
 	}
 }
