@@ -95,28 +95,7 @@ public class Board {
 		try {
 			FileReader reader = new FileReader(layoutConfigFile);
 			Scanner scan = new Scanner(reader);
-			String layout = "";
-			numRows = 0;
-			numColumns = 0;
-			// While we have lines in the file, keep reading in and collect row/column sizes
-			while(scan.hasNext()) {
-				if (numRows != 0) {
-					layout += ",";
-				}
-				numRows++;
-				String in = scan.nextLine();
-				String[] tempData = in.split(",");
-				if (numColumns == 0) {
-					numColumns = tempData.length;
-				}
-				else {
-					//if column size is not consistent throughout, throw exception for config file
-					if (numColumns != tempData.length) {
-						throw new BadConfigFormatException("Improper column sizes - check your file entries");
-					}
-				}
-				layout += in;
-			}
+			String layout = getLayoutInfo(scan);
 			//turn the scan into separated data we can read into our board with a split
 			String[] data = layout.split(",");
 			for (String entry: data) {
@@ -138,43 +117,7 @@ public class Board {
 						throw new BadConfigFormatException("Mismatched Icon for Room passed, does not match setup file.");
 					}
 					//If the cell contains more than 1 character, use a switch statement to determine what to do with the 2nd character
-					if (data[index].length() > 1) {
-						char special = data[index].charAt(1);
-						//This switch statement grabs the second character in the map data and compares it to a list of options to set various types of flags
-						switch(special) {
-							case '#':
-								grid[i][j].setRoomLabel(true);
-								roomMap.get(icon).setLabelCell(grid[i][j]);
-								break;
-							case '*':
-								grid[i][j].setRoomCenter(true);
-								roomMap.get(icon).setCenterCell(grid[i][j]);
-								break;
-							case '^':
-								grid[i][j].setDoorDirection(DoorDirection.UP);
-								break;
-							case '>':
-								grid[i][j].setDoorDirection(DoorDirection.RIGHT);
-								break;
-							case 'v':
-								grid[i][j].setDoorDirection(DoorDirection.DOWN);
-								break;
-							case '<':
-								grid[i][j].setDoorDirection(DoorDirection.LEFT);
-								break;
-							default:
-								//If none of the above cases are true, the character represents a secret passage.
-								if(roomMap.keySet().contains(special)) {
-									grid[i][j].setSecretPassage(special);
-								}
-								//Throw an exception if the character for the secret passage does not correspond to a room
-								else {
-									throw new BadConfigFormatException("Unrecognized special character, see room keys and review setup file.");
-								}
-								
-								break;
-						}
-					}
+					readSpecialCharacter(data, index, i, j, icon);
 					//Set the icon and status of the cell
 					grid[i][j].setInitial(icon);
 					grid[i][j].setIsPartOfRoom(roomMap.get(icon).getIsRoom());
@@ -185,6 +128,78 @@ public class Board {
 		} catch (FileNotFoundException e){
 			System.out.println(e.getMessage());
 		}
+	}
+
+	private void readSpecialCharacter(String[] data, int index, int i, int j, char icon)
+			throws BadConfigFormatException {
+		if (data[index].length() > 1) {
+			char special = data[index].charAt(1);
+			//This switch statement grabs the second character in the map data and compares it to a list of options to set various types of flags
+			switch(special) {
+				case '#':
+					grid[i][j].setRoomLabel(true);
+					roomMap.get(icon).setLabelCell(grid[i][j]);
+					break;
+				case '*':
+					grid[i][j].setRoomCenter(true);
+					roomMap.get(icon).setCenterCell(grid[i][j]);
+					break;
+				case '^':
+					grid[i][j].setDoorDirection(DoorDirection.UP);
+					break;
+				case '>':
+					grid[i][j].setDoorDirection(DoorDirection.RIGHT);
+					break;
+				case 'v':
+					grid[i][j].setDoorDirection(DoorDirection.DOWN);
+					break;
+				case '<':
+					grid[i][j].setDoorDirection(DoorDirection.LEFT);
+					break;
+				default:
+					//If none of the above cases are true, the character represents a secret passage.
+					if(roomMap.keySet().contains(special)) {
+						grid[i][j].setSecretPassage(special);
+					}
+					//Throw an exception if the character for the secret passage does not correspond to a room
+					else {
+						throw new BadConfigFormatException("Unrecognized special character, see room keys and review setup file.");
+					}
+					
+					break;
+			}
+		}
+	}
+
+	/**
+	 * @param scan
+	 * @return
+	 * @throws BadConfigFormatException
+	 */
+	private String getLayoutInfo(Scanner scan) throws BadConfigFormatException {
+		String layout = "";
+		numRows = 0;
+		numColumns = 0;
+		// While we have lines in the file, keep reading in and collect row/column sizes
+		while(scan.hasNext()) {
+			if (numRows != 0) {
+				layout += ",";
+			}
+			numRows++;
+			String in = scan.nextLine();
+			String[] tempData = in.split(",");
+			if (numColumns == 0) {
+				numColumns = tempData.length;
+			}
+			else {
+				//if column size is not consistent throughout, throw exception for config file
+				if (numColumns != tempData.length) {
+					throw new BadConfigFormatException("Improper column sizes - check your file entries");
+				}
+			}
+			layout += in;
+		}
+		return layout;
 	}
 	
 	//Create the set of target cells - blank method stub
