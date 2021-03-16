@@ -95,28 +95,7 @@ public class Board {
 		try {
 			FileReader reader = new FileReader(layoutConfigFile);
 			Scanner scan = new Scanner(reader);
-			String layout = "";
-			numRows = 0;
-			numColumns = 0;
-			// While we have lines in the file, keep reading in and collect row/column sizes
-			while(scan.hasNext()) {
-				if (numRows != 0) {
-					layout += ",";
-				}
-				numRows++;
-				String in = scan.nextLine();
-				String[] tempData = in.split(",");
-				if (numColumns == 0) {
-					numColumns = tempData.length;
-				}
-				else {
-					//if column size is not consistent throughout, throw exception for config file
-					if (numColumns != tempData.length) {
-						throw new BadConfigFormatException("Improper column sizes - check your file entries");
-					}
-				}
-				layout += in;
-			}
+			String layout = getLayoutInfo(scan);
 			//turn the scan into separated data we can read into our board with a split
 			String[] data = layout.split(",");
 			for (String entry: data) {
@@ -185,6 +164,37 @@ public class Board {
 		} catch (FileNotFoundException e){
 			System.out.println(e.getMessage());
 		}
+	}
+
+	/**
+	 * @param scan
+	 * @return
+	 * @throws BadConfigFormatException
+	 */
+	private String getLayoutInfo(Scanner scan) throws BadConfigFormatException {
+		String layout = "";
+		numRows = 0;
+		numColumns = 0;
+		// While we have lines in the file, keep reading in and collect row/column sizes
+		while(scan.hasNext()) {
+			if (numRows != 0) {
+				layout += ",";
+			}
+			numRows++;
+			String in = scan.nextLine();
+			String[] tempData = in.split(",");
+			if (numColumns == 0) {
+				numColumns = tempData.length;
+			}
+			else {
+				//if column size is not consistent throughout, throw exception for config file
+				if (numColumns != tempData.length) {
+					throw new BadConfigFormatException("Improper column sizes - check your file entries");
+				}
+			}
+			layout += in;
+		}
+		return layout;
 	}
 	
 	//Create the set of target cells - blank method stub
