@@ -110,7 +110,6 @@ public class Board {
 			for(int i = 0; i < numRows; i++) {
 				for(int j =0; j < numColumns; j++) {
 					grid[i][j] = new BoardCell(i,j);
-					grid[i][j].setDoorDirection(DoorDirection.NONE);
 					char icon = data[index].charAt(0);
 					//If the room icon for a data set is not in our room map from setup, throw an exception
 					if(!roomMap.keySet().contains(icon)) {
