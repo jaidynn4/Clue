@@ -116,57 +116,57 @@ public class Board {
 						throw new BadConfigFormatException("Mismatched Icon for Room passed, does not match setup file.");
 					}
 					//If the cell contains more than 1 character, use a switch statement to determine what to do with the 2nd character
-					readSpecialCharacter(data, index, i, j, icon);
+					if (data[index].length() > 1) {
+						char special = data[index].charAt(1);
+						readSpecialCharacter(grid[i][j], special, icon);
+					}
 					//Set the icon and status of the cell
 					grid[i][j].setInitial(icon);
 					grid[i][j].setIsPartOfRoom(roomMap.get(icon).getIsRoom());
 					index++;
 				}
 			}
-			
 		} catch (FileNotFoundException e){
 			System.out.println(e.getMessage());
 		}
 	}
 
-	private void readSpecialCharacter(String[] data, int index, int i, int j, char icon)
+	private void readSpecialCharacter(BoardCell cell, char special, char icon)
 			throws BadConfigFormatException {
-		if (data[index].length() > 1) {
-			char special = data[index].charAt(1);
-			//This switch statement grabs the second character in the map data and compares it to a list of options to set various types of flags
-			switch(special) {
-				case '#':
-					grid[i][j].setRoomLabel(true);
-					roomMap.get(icon).setLabelCell(grid[i][j]);
-					break;
-				case '*':
-					grid[i][j].setRoomCenter(true);
-					roomMap.get(icon).setCenterCell(grid[i][j]);
-					break;
-				case '^':
-					grid[i][j].setDoorDirection(DoorDirection.UP);
-					break;
-				case '>':
-					grid[i][j].setDoorDirection(DoorDirection.RIGHT);
-					break;
-				case 'v':
-					grid[i][j].setDoorDirection(DoorDirection.DOWN);
-					break;
-				case '<':
-					grid[i][j].setDoorDirection(DoorDirection.LEFT);
-					break;
-				default:
-					//If none of the above cases are true, the character represents a secret passage.
-					if(roomMap.keySet().contains(special)) {
-						grid[i][j].setSecretPassage(special);
-					}
-					//Throw an exception if the character for the secret passage does not correspond to a room
-					else {
-						throw new BadConfigFormatException("Unrecognized special character, see room keys and review setup file.");
-					}
-					
-					break;
-			}
+		
+		//This switch statement grabs the second character in the map data and compares it to a list of options to set various types of flags
+		switch(special) {
+			case '#':
+				cell.setRoomLabel(true);
+				roomMap.get(icon).setLabelCell(cell);
+				break;
+			case '*':
+				cell.setRoomCenter(true);
+				roomMap.get(icon).setCenterCell(cell);
+				break;
+			case '^':
+				cell.setDoorDirection(DoorDirection.UP);
+				break;
+			case '>':
+				cell.setDoorDirection(DoorDirection.RIGHT);
+				break;
+			case 'v':
+				cell.setDoorDirection(DoorDirection.DOWN);
+				break;
+			case '<':
+				cell.setDoorDirection(DoorDirection.LEFT);
+				break;
+			default:
+				//If none of the above cases are true, the character represents a secret passage.
+				if(roomMap.keySet().contains(special)) {
+					cell.setSecretPassage(special);
+				}
+				//Throw an exception if the character for the secret passage does not correspond to a room
+				else {
+					throw new BadConfigFormatException("Unrecognized special character, see room keys and review setup file.");
+				}
+				
+				break;
 		}
 	}
 
