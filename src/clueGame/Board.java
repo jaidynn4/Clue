@@ -86,11 +86,40 @@ public class Board {
 				if(type.equals("Room") || type.equals("Space")) {
 					makeRoom(data, type); //Handles setup of room types if that is the data being sent by file
 				}
-				//TODO make cards here
+				
+				//Makes a card for each valid type of object
+				makeCard(data, type);
+				
 			}
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
 		}
+	}
+
+	/**
+	 * @param data
+	 * @param type
+	 * @return
+	 */
+	private void makeCard(String[] data, String type) {
+		Card card;
+		switch(type) {
+			case "Room":
+				card = new Card(CardType.ROOM,data[1]);
+				roomDeck.add(card);
+				break;
+			case "Player":
+				card = new Card(CardType.PERSON, data[2]);
+				playerDeck.add(card);
+				break;
+			case "Weapon":
+				card = new Card(CardType.WEAPON, data[1]);
+				weaponDeck.add(card);
+				break;
+			default:
+				return;
+		}
+		theDeck.add(card);
 	}
 
 	
