@@ -11,7 +11,7 @@ public class Card {
 		this.cardName = cardName;
 	}
 
-	//
+	//We aren't sure why this method is needed yet. . . but it was in the UML diagram for the assignment so here it is.
 	public boolean equals(Card target) {
 		//TODO method stub
 		return true;

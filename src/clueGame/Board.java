@@ -17,9 +17,9 @@ public class Board {
 	private Map<Character, Room> roomMap;	//The map of all rooms that exist on the board
 	private Map<Color, Player>	playerMap;	//The map of all players that exist in the game
 	private ArrayList<Card> theDeck;		//Set representing all cards that exist in the game
-	private ArrayList<Card> playerDeck;			//Set of only player cards
-	private ArrayList<Card> weaponDeck;			//Set of only weapon cards
-	private ArrayList<Card> roomDeck;				//Set of only room cards
+	private ArrayList<Card> playerDeck;		//Set of only player cards
+	private ArrayList<Card> weaponDeck;		//Set of only weapon cards
+	private ArrayList<Card> roomDeck;		//Set of only room cards
 	private Solution theAnswer;				//The Solution to the game
 	private static Board theInstance;		//The Singleton Pattern instance of the board class
 	
@@ -87,30 +87,9 @@ public class Board {
 				if(type.equals("Room") || type.equals("Space")) {
 					makeRoom(data, type); //Handles setup of room types if that is the data being sent by file
 				}
-				if(type.equals("Player")) {
-					
-					//convert string to color
-					Color playerColor;
-					try {
-						playerColor = (Color)Color.class.getField(data[1].toUpperCase()).get(null);
-						int row = Integer.parseInt(data[3]);
-						int col = Integer.parseInt(data[4]);
-						
-						//Default setup makes the first player to appear in the setup file become the human player character
-						if(!humanPlayerExists) {
-							Player player = new HumanPlayer(data[2], playerColor, row, col);
-							playerMap.put(playerColor, player);
-							humanPlayerExists = true;
-						} else {
-							Player player = new ComputerPlayer(data[2], playerColor, row, col);
-							playerMap.put(playerColor, player);
-						}
-						
-					} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-						System.out.println(e.getMessage());
-					}
-					
-					
+				if(type.equals("Player")) {	
+					//Creates a new player and adds it to the map of players
+					humanPlayerExists = makePlayer(humanPlayerExists, data);
 				}
 				
 				//Makes a card for each valid type of object
@@ -125,30 +104,35 @@ public class Board {
 		}
 	}
 
-	
-	
-	//Helper method for loadSetupConfig() that handles setup of card types
-	private void makeCard(String[] data, String type) {
-		Card card;
-		switch(type) {
-			case "Room":
-				card = new Card(CardType.ROOM,data[1]);
-				roomDeck.add(card);
-				break;
-			case "Player":
-				card = new Card(CardType.PERSON, data[2]);
-				playerDeck.add(card);
-				break;
-			case "Weapon":
-				card = new Card(CardType.WEAPON, data[1]);
-				weaponDeck.add(card);
-				break;
-			default:
-				return;
+	//Helper method for loadSetupConfig() that handles creation of a player object
+	private boolean makePlayer(boolean humanPlayerExists, String[] data) {
+		try {
+			//convert string to color
+			Color playerColor = (Color)Color.class.getField(data[1].toUpperCase()).get(null);
+			
+			//parse row and col info from file to int
+			int row = Integer.parseInt(data[3]);
+			int col = Integer.parseInt(data[4]);
+			
+			//Default setup makes the first player to appear in the setup file become the human player character
+			if(!humanPlayerExists) {
+				Player player = new HumanPlayer(data[2], playerColor, row, col);
+				playerMap.put(playerColor, player);
+				humanPlayerExists = true;
+			} else {
+				Player player = new ComputerPlayer(data[2], playerColor, row, col);
+				playerMap.put(playerColor, player);
+			}
+		//Catch the many possible exceptions that the color class wants handled here
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+			System.out.println(e.getMessage());
 		}
-		theDeck.add(card);
+		return humanPlayerExists;
 	}
 
+	
+	
+	
 	
 	//Helper method for loadSetupConfig() that handles setup of room types
 	private void makeRoom(String[] data, String type) throws BadConfigFormatException {
@@ -167,11 +151,38 @@ public class Board {
 	
 	
 	
+	//Helper method for loadSetupConfig() that handles setup of card types
+	private void makeCard(String[] data, String type) {
+		//Create a different card type depending on the data read from the setup config file
+		Card card;
+		switch(type) {
+			case "Room":
+				card = new Card(CardType.ROOM,data[1]);
+				roomDeck.add(card);
+				break;
+			case "Player":
+				card = new Card(CardType.PERSON, data[2]);
+				playerDeck.add(card);
+				break;
+			case "Weapon":
+				card = new Card(CardType.WEAPON, data[1]);
+				weaponDeck.add(card);
+				break;
+			//If the data does not match a card type (e.g. the data is "Space") then ignore it
+			default:
+				return;
+		}
+		//Add the new card to theDeck
+		theDeck.add(card);
+	}
+
+	
 	
 	//Deal out the cards
 	public void deal() {
 		Random rand = new Random();
 		
+		//Generate a random card of each type and deal them to the Solution
 		int randNum = rand.nextInt(playerDeck.size());
 		Card playerCard = playerDeck.get(randNum);
 		randNum = rand.nextInt(roomDeck.size());
@@ -179,6 +190,8 @@ public class Board {
 		randNum = rand.nextInt(weaponDeck.size());
 		Card weaponCard = weaponDeck.get(randNum);
 		theAnswer = new Solution(playerCard, roomCard, weaponCard);
+		
+		//Remove the Solution cards from theDeck so that they are not dealt to players
 		theDeck.remove(playerCard);
 		theDeck.remove(roomCard);
 		theDeck.remove(weaponCard);
@@ -191,6 +204,7 @@ public class Board {
 			index++;
 		}
 		
+		//While there are still cards in theDeck, loop through the players and deal one card to the current player
 		int i = 0;
 		while(theDeck.size() > 0) {
 			if(i == players.length) {
