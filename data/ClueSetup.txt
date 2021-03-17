@@ -1,4 +1,4 @@
-//Rooms and room cards
+//Room Info
 Room, Engine Room, E
 Room, Docking Bay, D
 Room, Bridge, B
@@ -8,6 +8,20 @@ Room, Trash Compactor, T
 Room, Navigation, N
 Room, Captain's Quarters, C
 Room, Mess Hall, H
-//other spaces on board
+//Other spaces on board
 Space, Unused, X
 Space, Walkway, W
+//Player Info
+Player, white, Grand Admiral Thrawn, 0, 5
+Player, black, Darth Vader, 17, 0
+Player, yellow, Grand Moff Tarkin, 4, 0
+Player, red, Moff Jerjerrod, 31, 18
+Player, blue, Rear Admiral Chiraneau, 6, 24
+Player, gray, Emperor Palpatine, 0, 19
+//Weapon Info
+Weapon, Blaster
+Weapon, Lightsaber
+Weapon, Hydrospanner
+Weapon, Fusion Cutter
+Weapon, Thermal Detonator
+Weapon, Shock Stick

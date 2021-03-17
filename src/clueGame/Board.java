@@ -3,6 +3,8 @@ package clueGame;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
+import java.util.List;
+import java.awt.*;
 
 public class Board {
 	private BoardCell[][] grid;				//The game board
@@ -13,7 +15,9 @@ public class Board {
 	private String layoutConfigFile;		//Stores the filename of the layoutConfigFile
 	private String setupConfigFile;			//Stores the filename of the setupConfigFile
 	private Map<Character, Room> roomMap;	//The map of all rooms that exist on the board
+	private Map<Color, Player>	playerMap;	//The map of all players that exist in the game
 	private static Board theInstance;		//The Singleton Pattern instance of the board class
+	
 	
 	//Board constructor
 	private Board() {
@@ -34,6 +38,7 @@ public class Board {
 		this.targets = new HashSet<BoardCell>();
 		this.visited = new HashSet<BoardCell>();
 		this.roomMap = new HashMap<Character, Room>();
+		this.playerMap = new HashMap<Color, Player>();
 		//Load the files with the game board information and handle any exceptions thrown
 		try {
 			loadSetupConfig();
@@ -63,25 +68,36 @@ public class Board {
 				}
 				//Create an array for each entry in the line
 				String[] data = in.split(", ");
-				//Throw an exception if there are more than 3 entries in the line
-				if(data.length != 3) {
-					throw new BadConfigFormatException("Invalid setup, each room needs a type, a name, and an icon");
-				}
+				ArrayList<String> allowedDataTypes = new ArrayList<String>(List.of("Room", "Space", "Player", "Weapon"));
 				//Throw an exception if the first entry is invalid
-				if(!data[0].equals("Space") && !data[0].equals("Room")) {
+				String type = data[0]; //Saves the type of object to setup
+				if(!allowedDataTypes.contains(type)) {
 					throw new BadConfigFormatException("Invalid type of cell - Needs to be Room or Space");
+				}	
+				if(type.equals("Room") || type.equals("Space")) {
+					makeRoom(data, type); //Handles setup of room types if that is the data being sent by file
 				}
-				//Throw an exception if the room icon is not a single character
-				if(data[2].length() != 1) {
-					throw new BadConfigFormatException("Invalid room icon - Needs to be a single character");
-				}
-				//If we survived all that rigorous error testing, create a new room matching the data line.
-				Room temp = new Room(data[1], data[0].equals("Room"));
-				this.roomMap.put(data[2].charAt(0), temp);
+				
 			}
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
 		}
+	}
+
+	
+	//Helper method for loadSetupConfig() that handles setup of room types
+	private void makeRoom(String[] data, String type) throws BadConfigFormatException {
+		//Throw an exception if there are more than 3 entries in the line
+		if(data.length != 3) {
+			throw new BadConfigFormatException("Invalid setup, each room needs a type, a name, and an icon");
+		}
+		//Throw an exception if the room icon is not a single character
+		if(data[2].length() != 1) {
+			throw new BadConfigFormatException("Invalid room icon - Needs to be a single character");
+		}
+		//If we survived all that rigorous error testing, create a new room matching the data line.
+		Room temp = new Room(data[1], type.equals("Room"));
+		this.roomMap.put(data[2].charAt(0), temp);
 	}
 	
 	//Load the layout file
@@ -235,12 +251,22 @@ public class Board {
 		this.setupConfigFile = "./data/" + setup;
 	}
 	
-	//Getter for the room character
-	public Room getRoom(Character icon) {
+	//Gets a player based on color
+	public Player getPlayer(Color color) {
+		return playerMap.get(color);
+	}
+	
+	
+	public Map<Color, Player> getPlayerMap() {
+		return playerMap;
+	}
+
+	//Getter for the room object from char
+	public Room getRoom(char icon) {
 		return roomMap.get(icon);
 	}
 	
-	//Getter for the full room object
+	//Getter for the room object from cell
 	public Room getRoom(BoardCell cell) {
 		return roomMap.get(cell.getInitial());
 	}
@@ -248,6 +274,7 @@ public class Board {
 	public Set<BoardCell> getAdjList(int x, int y) {
 		return this.getCell(x,y).getAdjList();
 	}
+	
 	//Getter for targets
 	public Set<BoardCell> getTargets() {
 		return targets;

@@ -1,21 +1,20 @@
 package tests;
 
 /*
- * This program tests that config files are git lloaded properly.
+ * This program tests that config files are loaded properly.
  */
 
 // Doing a static import allows me to write assertEquals rather than
 // Assert.assertEquals
 import static org.junit.Assert.*;
 
+import java.awt.Color;
+
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import clueGame.Board;
-import clueGame.BoardCell;
-import clueGame.DoorDirection;
-import clueGame.Room;
+import clueGame.*;
 
 public class FileInitTest {
 
@@ -159,4 +158,29 @@ public class FileInitTest {
 		assertFalse( cell.isLabel() );
 
 	}
+	
+	
+	//Test players created properly
+	@Test
+	public void testPlayers() {
+		//Test that we have the right number of players
+		assertEquals(board.getPlayerMap().size(), 6);
+		
+		//Test that there are a human player and a computer player created
+		assertTrue(board.getPlayer(Color.white) instanceof HumanPlayer);
+		assertTrue(board.getPlayer(Color.blue) instanceof ComputerPlayer);
+		
+		//Check start locations are proper
+		Color checkColor = Color.white;
+		BoardCell playerCell = board.getCell(board.getPlayer(checkColor).getRow(), board.getPlayer(checkColor).getColumn());
+		assertEquals(board.getCell(0,5), playerCell);
+		checkColor = Color.gray;
+		playerCell = board.getCell(board.getPlayer(checkColor).getRow(), board.getPlayer(checkColor).getColumn());
+		assertEquals(board.getCell(0,19), playerCell);
+		checkColor = Color.blue;
+		playerCell = board.getCell(board.getPlayer(checkColor).getRow(), board.getPlayer(checkColor).getColumn());
+		assertEquals(board.getCell(6,24), playerCell);
+	}
+	
+	
 }
