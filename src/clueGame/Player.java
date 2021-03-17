@@ -1,13 +1,15 @@
 package clueGame;
 
 import java.awt.Color;
+import java.util.*;
 
 public abstract class Player {
 	
 	private String name;
 	private Color color;
-	private int row;
-	private int column;
+	protected int row;
+	protected int column;
+	protected Set<Card> hand;
 
 	public Player(String name, Color color, int row, int column) {
 		super();
@@ -15,9 +17,14 @@ public abstract class Player {
 		this.color = color;
 		this.row = row;
 		this.column = column;
+		hand = new HashSet<Card>();
 	}
 	
 	public abstract void updateHand(Card card);
+	
+	public Set<Card> getHand() {
+		return hand;
+	}
 
 	public String getName() {
 		return name;

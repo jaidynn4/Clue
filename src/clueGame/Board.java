@@ -16,6 +16,11 @@ public class Board {
 	private String setupConfigFile;			//Stores the filename of the setupConfigFile
 	private Map<Character, Room> roomMap;	//The map of all rooms that exist on the board
 	private Map<Color, Player>	playerMap;	//The map of all players that exist in the game
+	private Set<Card> theDeck;				//Set representing all cards that exist in the game
+	private Set<Card> playerDeck;			//Set of only player cards
+	private Set<Card> weaponDeck;			//Set of only weapon cards
+	private Set<Card> roomDeck;				//Set of only room cards
+	private Solution theAnswer;				//The Solution to the game
 	private static Board theInstance;		//The Singleton Pattern instance of the board class
 	
 	
@@ -37,6 +42,10 @@ public class Board {
 		//Create new data structures for the instance variables
 		this.targets = new HashSet<BoardCell>();
 		this.visited = new HashSet<BoardCell>();
+		this.theDeck = new HashSet<Card>();
+		this.playerDeck = new HashSet<Card>();
+		this.weaponDeck = new HashSet<Card>();
+		this.roomDeck = new HashSet<Card>();
 		this.roomMap = new HashMap<Character, Room>();
 		this.playerMap = new HashMap<Color, Player>();
 		//Load the files with the game board information and handle any exceptions thrown
@@ -77,7 +86,7 @@ public class Board {
 				if(type.equals("Room") || type.equals("Space")) {
 					makeRoom(data, type); //Handles setup of room types if that is the data being sent by file
 				}
-				
+				//TODO make cards here
 			}
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
@@ -99,6 +108,17 @@ public class Board {
 		Room temp = new Room(data[1], type.equals("Room"));
 		this.roomMap.put(data[2].charAt(0), temp);
 	}
+	
+	
+	
+	
+	//Deal out the cards
+	public void deal() {
+		//TODO method stub
+	}
+	
+	
+	
 	
 	//Load the layout file
 	public void loadLayoutConfig() throws BadConfigFormatException {
@@ -256,9 +276,33 @@ public class Board {
 		return playerMap.get(color);
 	}
 	
-	
+	//Getter for the playerMap
 	public Map<Color, Player> getPlayerMap() {
 		return playerMap;
+	}
+	
+	//Getter for theDeck
+	public Set<Card> getTheDeck() {
+		return theDeck;
+	}
+	
+	//Getter for playerDeck
+	public Set<Card> getPlayerDeck() {
+		return playerDeck;
+	}
+
+	//Getter for weaponDeck
+	public Set<Card> getWeaponDeck() {
+		return weaponDeck;
+	}
+
+	//Getter for roomDeck
+	public Set<Card> getRoomDeck() {
+		return roomDeck;
+	}
+
+	public Solution getTheAnswer() {
+		return theAnswer;
 	}
 
 	//Getter for the room object from char
