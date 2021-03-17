@@ -31,25 +31,25 @@ public class BoardCell {
 		//Check whether to add the cell to the west
 		Board theBoard = Board.getInstance();
 		if (this.col > 0) {
-			if (getAdjacent(this, theBoard.getCell(row, col - 1), DoorDirection.LEFT)) {
+			if (shouldBeAdjacent(this, theBoard.getCell(row, col - 1), DoorDirection.LEFT)) {
 				adjacencyList.add(theBoard.getCell(row, col - 1));
 			}
 		}
 		//Check whether to add the cell to the east
 		if (this.col < theBoard.getNumColumns() - 1){
-			if( getAdjacent(this, theBoard.getCell(row, col + 1), DoorDirection.RIGHT)) {
+			if( shouldBeAdjacent(this, theBoard.getCell(row, col + 1), DoorDirection.RIGHT)) {
 				adjacencyList.add(theBoard.getCell(row, col + 1));
 			}
 		}
 		//Check whether to add the cell to the north
 		if (this.row > 0) {
-			if(getAdjacent(this, theBoard.getCell(row - 1, col), DoorDirection.UP)) {
+			if(shouldBeAdjacent(this, theBoard.getCell(row - 1, col), DoorDirection.UP)) {
 				adjacencyList.add(theBoard.getCell(row - 1, col));
 			}
 		}
 		//Check whether to add the cell to the south
 		if (this.row < theBoard.getNumRows() - 1) {
-			if(getAdjacent(this, theBoard.getCell(row + 1, col), DoorDirection.DOWN)) {
+			if(shouldBeAdjacent(this, theBoard.getCell(row + 1, col), DoorDirection.DOWN)) {
 				adjacencyList.add(theBoard.getCell(row + 1, col));
 			}
 		}
@@ -58,8 +58,8 @@ public class BoardCell {
 	
 	
 	
-	//A helper method used for getAdjacencies
-	public boolean getAdjacent(BoardCell currentCell, BoardCell cellToCheck, DoorDirection door) {
+	//A helper method used for getAdjacencies, decides if the cell in question should be added to list
+	public boolean shouldBeAdjacent(BoardCell currentCell, BoardCell cellToCheck, DoorDirection door) {
 		Board theBoard = Board.getInstance();
 		
 		//false if unused
@@ -87,7 +87,7 @@ public class BoardCell {
 		if (currentCell.isPartOfRoom()) {
 			return false;
 		}
-
+		//false if cell to check is a room
 		if (cellToCheck.isPartOfRoom()) {
 			return false;
 		}
