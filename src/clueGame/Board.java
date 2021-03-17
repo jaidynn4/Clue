@@ -49,12 +49,6 @@ public class Board {
 	}
 	
 	
-	//Sets the chosen files for the project in the instance variables.
-	public void setConfigFiles(String layout, String setup) {
-		this.layoutConfigFile = "./data/" + layout;
-		this.setupConfigFile = "./data/" + setup;
-	}
-	
 	//Load the Setup file
 	public void loadSetupConfig() throws BadConfigFormatException {
 		try {
@@ -131,10 +125,38 @@ public class Board {
 		}
 	}
 
-	private void readSpecialCharacter(BoardCell cell, char special, char icon)
-			throws BadConfigFormatException {
-		
-		//This switch statement grabs the second character in the map data and compares it to a list of options to set various types of flags
+	
+
+	//This helper method for loadLayoutConfig() checks the size of the map and returns a split string for the board layout
+	private String getLayoutInfo(Scanner scan) throws BadConfigFormatException {
+		String layout = "";
+		numRows = 0;
+		numColumns = 0;
+		// While we have lines in the file, keep reading in and collect row/column sizes
+		while(scan.hasNext()) {
+			if (numRows != 0) {
+				layout += ",";
+			}
+			numRows++;
+			String in = scan.nextLine();
+			String[] tempData = in.split(",");
+			if (numColumns == 0) {
+				numColumns = tempData.length;
+			}
+			else {
+				//if column size is not consistent throughout, throw exception for config file
+				if (numColumns != tempData.length) {
+					throw new BadConfigFormatException("Improper column sizes - check your file entries");
+				}
+			}
+			layout += in;
+		}
+		return layout;
+	}
+	
+	
+	//This helper method for loadLayoutConfig() has a switch statement grabs the second character in the map data and compares it to a list of options to set various types of flags
+	private void readSpecialCharacter(BoardCell cell, char special, char icon) throws BadConfigFormatException {
 		switch(special) {
 			case '#':
 				cell.setRoomLabel(true);
@@ -169,37 +191,8 @@ public class Board {
 				break;
 		}
 	}
-
-	/**
-	 * @param scan
-	 * @return
-	 * @throws BadConfigFormatException
-	 */
-	private String getLayoutInfo(Scanner scan) throws BadConfigFormatException {
-		String layout = "";
-		numRows = 0;
-		numColumns = 0;
-		// While we have lines in the file, keep reading in and collect row/column sizes
-		while(scan.hasNext()) {
-			if (numRows != 0) {
-				layout += ",";
-			}
-			numRows++;
-			String in = scan.nextLine();
-			String[] tempData = in.split(",");
-			if (numColumns == 0) {
-				numColumns = tempData.length;
-			}
-			else {
-				//if column size is not consistent throughout, throw exception for config file
-				if (numColumns != tempData.length) {
-					throw new BadConfigFormatException("Improper column sizes - check your file entries");
-				}
-			}
-			layout += in;
-		}
-		return layout;
-	}
+	
+	
 	
 	//Create the set of target cells - blank method stub
 	public void calcTargets(BoardCell startCell, int pathlength) {
@@ -233,6 +226,11 @@ public class Board {
 	}
 	
 	
+	//Sets the chosen files for the project in the instance variables.
+	public void setConfigFiles(String layout, String setup) {
+		this.layoutConfigFile = "./data/" + layout;
+		this.setupConfigFile = "./data/" + setup;
+	}
 	
 	//Getter for the room character
 	public Room getRoom(Character icon) {
