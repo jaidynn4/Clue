@@ -89,7 +89,8 @@ public class Board {
 		try {
 			FileReader reader = new FileReader(layoutConfigFile);
 			Scanner scan = new Scanner(reader);
-			String layout = getLayoutInfo(scan);
+			String layout = getLayoutInfo(scan);	//Calls a helper method to return a String representation of the board layout
+			
 			//turn the scan into separated data we can read into our board with a split
 			String[] data = layout.split(",");
 			for (String entry: data) {
@@ -98,8 +99,10 @@ public class Board {
 					throw new BadConfigFormatException("Improper entry in file - ensure that each cell contains no more than 2 characters");
 				}
 			}
-			int index = 0;
-			grid = new BoardCell[numRows][numColumns];
+			
+			int index = 0;	//Tracks the current index within the String array 'data'
+			grid = new BoardCell[numRows][numColumns];	//A 2D array storing the cells on the game board by indices
+			
 			// loop through our grid that was just allocated and make a cell for each spot based on our data, setting flags and such as needed.
 			for(int i = 0; i < numRows; i++) {
 				for(int j =0; j < numColumns; j++) {
@@ -127,7 +130,7 @@ public class Board {
 
 	
 
-	//This helper method for loadLayoutConfig() checks the size of the map and returns a split string for the board layout
+	//This helper method for loadLayoutConfig() checks the size of the map and returns a string for the board layout
 	private String getLayoutInfo(Scanner scan) throws BadConfigFormatException {
 		String layout = "";
 		numRows = 0;

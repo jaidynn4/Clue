@@ -28,8 +28,9 @@ public class BoardCell {
 	
 	//Create the adjacency list for this cell
 	public void getAdjacencies() {
+		Board theBoard = Board.getInstance();	//Reference to the instance of the game board
+		
 		//Check whether to add the cell to the west
-		Board theBoard = Board.getInstance();
 		if (this.col > 0) {
 			if (shouldBeAdjacent(this, theBoard.getCell(row, col - 1), DoorDirection.LEFT)) {
 				adjacencyList.add(theBoard.getCell(row, col - 1));
@@ -60,7 +61,7 @@ public class BoardCell {
 	
 	//A helper method used for getAdjacencies, decides if the cell in question should be added to list
 	public boolean shouldBeAdjacent(BoardCell currentCell, BoardCell cellToCheck, DoorDirection door) {
-		Board theBoard = Board.getInstance();
+		Board theBoard = Board.getInstance(); //Reference to the instance of the game board
 		
 		//false if unused
 		if (cellToCheck.getInitial() == 'X') {
@@ -69,17 +70,17 @@ public class BoardCell {
 		
 		//if the cell's door direction matches the specified door direction, link it to the room center
 		if (currentCell.doorDirection == door) {
-			Room currentRoom = theBoard.getRoom(cellToCheck.getInitial());
-			adjacencyList.add(currentRoom.getCenterCell());
-			currentRoom.getCenterCell().addAdjacency(currentCell);
+			Room adjacentRoom = theBoard.getRoom(cellToCheck.getInitial());	//The initial of the room of the cell we are checking
+			adjacencyList.add(adjacentRoom.getCenterCell());
+			adjacentRoom.getCenterCell().addAdjacency(currentCell);
 			return false;
 		}
 		
 		//if the room is a secret passage indicator, add the secret passage room's center cell to the
 		//adjacency list of the current room's center cell
 		if (currentCell.secretPassage != '!') {
-			Room currentRoom = theBoard.getRoom(currentCell.getInitial());
-			Room passageRoom = theBoard.getRoom(currentCell.secretPassage);
+			Room currentRoom = theBoard.getRoom(currentCell.getInitial());		//The initial of the room of the current cell
+			Room passageRoom = theBoard.getRoom(currentCell.secretPassage);		//The initial of the secret passage room
 			currentRoom.getCenterCell().addAdjacency(passageRoom.getCenterCell());
 			return false;
 		}
