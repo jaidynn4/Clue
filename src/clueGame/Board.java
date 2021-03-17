@@ -16,10 +16,10 @@ public class Board {
 	private String setupConfigFile;			//Stores the filename of the setupConfigFile
 	private Map<Character, Room> roomMap;	//The map of all rooms that exist on the board
 	private Map<Color, Player>	playerMap;	//The map of all players that exist in the game
-	private Set<Card> theDeck;				//Set representing all cards that exist in the game
-	private Set<Card> playerDeck;			//Set of only player cards
-	private Set<Card> weaponDeck;			//Set of only weapon cards
-	private Set<Card> roomDeck;				//Set of only room cards
+	private ArrayList<Card> theDeck;		//Set representing all cards that exist in the game
+	private ArrayList<Card> playerDeck;			//Set of only player cards
+	private ArrayList<Card> weaponDeck;			//Set of only weapon cards
+	private ArrayList<Card> roomDeck;				//Set of only room cards
 	private Solution theAnswer;				//The Solution to the game
 	private static Board theInstance;		//The Singleton Pattern instance of the board class
 	
@@ -42,10 +42,10 @@ public class Board {
 		//Create new data structures for the instance variables
 		this.targets = new HashSet<BoardCell>();
 		this.visited = new HashSet<BoardCell>();
-		this.theDeck = new HashSet<Card>();
-		this.playerDeck = new HashSet<Card>();
-		this.weaponDeck = new HashSet<Card>();
-		this.roomDeck = new HashSet<Card>();
+		this.theDeck = new ArrayList<Card>();
+		this.playerDeck = new ArrayList<Card>();
+		this.weaponDeck = new ArrayList<Card>();
+		this.roomDeck = new ArrayList<Card>();
 		this.roomMap = new HashMap<Character, Room>();
 		this.playerMap = new HashMap<Color, Player>();
 		//Load the files with the game board information and handle any exceptions thrown
@@ -68,6 +68,7 @@ public class Board {
 		try {
 			FileReader reader = new FileReader(setupConfigFile);
 			Scanner scan = new Scanner(reader);
+			boolean humanPlayerExists = false;	//Track whether a human player has been created
 			//While the file has another line, read in the line
 			while(scan.hasNext()) {
 				String in = scan.nextLine();
@@ -86,21 +87,47 @@ public class Board {
 				if(type.equals("Room") || type.equals("Space")) {
 					makeRoom(data, type); //Handles setup of room types if that is the data being sent by file
 				}
+				if(type.equals("Player")) {
+					
+					//convert string to color
+					Color playerColor;
+					try {
+						playerColor = (Color)Color.class.getField(data[1].toUpperCase()).get(null);
+						int row = Integer.parseInt(data[3]);
+						int col = Integer.parseInt(data[4]);
+						
+						//Default setup makes the first player to appear in the setup file become the human player character
+						if(!humanPlayerExists) {
+							Player player = new HumanPlayer(data[2], playerColor, row, col);
+							playerMap.put(playerColor, player);
+							humanPlayerExists = true;
+						} else {
+							Player player = new ComputerPlayer(data[2], playerColor, row, col);
+							playerMap.put(playerColor, player);
+						}
+						
+					} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+						System.out.println(e.getMessage());
+					}
+					
+					
+				}
 				
 				//Makes a card for each valid type of object
 				makeCard(data, type);
 				
+			}
+			if(playerMap.size() != 0) {
+				deal();
 			}
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
 		}
 	}
 
-	/**
-	 * @param data
-	 * @param type
-	 * @return
-	 */
+	
+	
+	//Helper method for loadSetupConfig() that handles setup of card types
 	private void makeCard(String[] data, String type) {
 		Card card;
 		switch(type) {
@@ -143,7 +170,39 @@ public class Board {
 	
 	//Deal out the cards
 	public void deal() {
-		//TODO method stub
+		Random rand = new Random();
+		
+		int randNum = rand.nextInt(playerDeck.size());
+		Card playerCard = playerDeck.get(randNum);
+		randNum = rand.nextInt(roomDeck.size());
+		Card roomCard = roomDeck.get(randNum);
+		randNum = rand.nextInt(weaponDeck.size());
+		Card weaponCard = weaponDeck.get(randNum);
+		theAnswer = new Solution(playerCard, roomCard, weaponCard);
+		theDeck.remove(playerCard);
+		theDeck.remove(roomCard);
+		theDeck.remove(weaponCard);
+
+		//Populate an Array of Player objects for ease of indexing
+		Player[] players = new Player[playerMap.values().size()];
+		int index = 0;
+		for(Player player: playerMap.values()) {
+			players[index] = player;
+			index++;
+		}
+		
+		int i = 0;
+		while(theDeck.size() > 0) {
+			if(i == players.length) {
+				i = 0;
+			} else {
+				randNum = rand.nextInt(theDeck.size());
+				Card card = theDeck.get(randNum);
+				theDeck.remove(card);
+				players[i].updateHand(card);
+				i++;
+			}
+		}
 	}
 	
 	
@@ -311,22 +370,22 @@ public class Board {
 	}
 	
 	//Getter for theDeck
-	public Set<Card> getTheDeck() {
+	public ArrayList<Card> getTheDeck() {
 		return theDeck;
 	}
 	
 	//Getter for playerDeck
-	public Set<Card> getPlayerDeck() {
+	public ArrayList<Card> getPlayerDeck() {
 		return playerDeck;
 	}
 
 	//Getter for weaponDeck
-	public Set<Card> getWeaponDeck() {
+	public ArrayList<Card> getWeaponDeck() {
 		return weaponDeck;
 	}
 
 	//Getter for roomDeck
-	public Set<Card> getRoomDeck() {
+	public ArrayList<Card> getRoomDeck() {
 		return roomDeck;
 	}
 
