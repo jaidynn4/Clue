@@ -3,6 +3,7 @@ package clueGame;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Set;
 
 public class ComputerPlayer extends Player {
 
@@ -64,6 +65,10 @@ public class ComputerPlayer extends Player {
 		
 		//Return a solution using the three chosen cards
 		return new Solution(playerCard, roomCard, weaponCard);
+	}
+	
+	public BoardCell findTarget(int pathlength) {
+		return null;
 	}
 
 }

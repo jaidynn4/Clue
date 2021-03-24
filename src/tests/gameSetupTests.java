@@ -250,6 +250,41 @@ public class gameSetupTests {
 		}
 		assertTrue(equivalenceTracker > 0);
 	}	
-				
+	
+	//Testing for Computer AI target selection
+	@Test
+	public void testComputerTarget() {
+		//new player placed just outside bridge next to door
+		ComputerPlayer cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 6, 10);
+		//player rolls a 1 for pathlength
+		int roll = 2;
+		//test that bridge is selected as an unseen room and not other spots
+		assertTrue(board.getCell(3, 12).equals(cpuPlayer.findTarget(roll)));
+		
+		//move player a bit above the engine room
+		cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 20, 0);
+		
+		cpuPlayer.updateSeen(armoryCard);
+		cpuPlayer.updateSeen(messCard);
+		cpuPlayer.updateSeen(maintenanceCard);
+		
+		//impossible huge roll so we get multiple rooms as options
+		roll = 16;
+		
+		//testing that only the unseen room of various options is picked
+		assertTrue(board.getCell(30, 9).equals(cpuPlayer.findTarget(roll)));
+		
+		//move player a bit above the engine room
+		cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 24, 0);
+		
+		cpuPlayer.updateSeen(engineCard);
+		
+		//impossible huge roll so we get multiple rooms as options
+		roll = 1;
+		board.getCell(24, 1).setOccupied(true);
+		//testing that no room is picked of various options when all rooms have been seen
+		assertTrue(board.getCell(23, 0).equals(cpuPlayer.findTarget(roll)));
+		
+	}
 				
 }
