@@ -154,6 +154,35 @@ public class gameSetupTests {
 		assertEquals(null, player.disproveSuggestion(new Solution(vaderCard, navCard, spannerCard)));
 	}
 	
-	
+	//Test suggestions that are made
+	@Test
+	public void testSuggestion() {
+		Player player1 = new HumanPlayer("Hooman", Color.black, 1, 1);
+		Player player2 = new ComputerPlayer("Hal9000", Color.red, 1, 1);
+		Player player3 = new ComputerPlayer("R2D2", Color.blue, 1, 1);
+		Player player4 = new ComputerPlayer("C3P0", Color.yellow, 1, 1);
+		Player[] players = new Player[4];
+		players[0] = player1;
+		players[1] = player2;
+		players[2] = player3;
+		players[3] = player4;
+		
+		player1.updateHand(thrawnCard);
+		player1.updateHand(bridgeCard);
+		player2.updateHand(vaderCard);
+		player2.updateHand(saberCard);
+		player3.updateHand(armoryCard);
+		player3.updateHand(shockCard);
+		player4.updateHand(blasterCard);
+		player4.updateHand(messCard);
+		
+		
+		//return first card seen and do not continue
+		assertEquals(shockCard, board.processSuggestion(player2, new Solution(thrawnCard, messCard, shockCard)));
+		//testing that last card of last player is returned if it is only option
+		assertEquals(messCard, board.processSuggestion(player1, new Solution(moffCard, messCard, spannerCard)));
+		//testing null returned if card not in any hands
+		assertEquals(null, board.processSuggestion(player1, new Solution(palpatineCard, navCard, spannerCard)));
+	}
 	
 }

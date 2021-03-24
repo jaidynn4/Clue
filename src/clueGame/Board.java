@@ -415,6 +415,10 @@ public class Board {
 		return theAnswer.equals(accusation);
 	}
 
+	//check a suggestion and have players disprove it
+	public Card processSuggestion(Player accuser, Solution suggestion) {
+		return null;
+	}
 
 	//Getter for the room object from char
 	public Room getRoom(char icon) {
