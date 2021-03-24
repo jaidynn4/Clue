@@ -219,7 +219,7 @@ public class gameSetupTests {
 	@Test
 	public void testSuggestionCreation() {
 		ComputerPlayer cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 3, 12);
-		
+		//set player hand to every card except 1 of each type
 		for (int i = 1; i < peopleDeck.size(); i++) {
 			cpuPlayer.updateHand(peopleDeck.get(i));
 			cpuPlayer.updateHand(weaponDeck.get(i));
@@ -227,10 +227,12 @@ public class gameSetupTests {
 		for (int i = 1; i < roomDeck.size(); i++) {
 			cpuPlayer.updateHand(roomDeck.get(i));
 		}
+		
+		//grab a solution from the cpu player with all cards in hand, besides 3 and check it for top of deck cards
 		Solution suggestion = cpuPlayer.createSuggestion(peopleDeck, roomDeck, weaponDeck);
 		assertTrue(suggestion.equals(new Solution(peopleDeck.get(0), bridgeCard, weaponDeck.get(0))));
 		
-		
+		//reset player, do all but 2 of each type of card into hand
 		cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 3, 12);
 		
 		for (int i = 2; i < peopleDeck.size(); i++) {
@@ -241,14 +243,15 @@ public class gameSetupTests {
 			cpuPlayer.updateHand(roomDeck.get(i));
 		}
 		
-		int equivalenceTracker = 0;
+		//loop many times and make sure we see the solution is randomly chosen at least once
+		boolean foundSolution = false;
 		for (int i = 0; i < 500; i++) {
 			suggestion = cpuPlayer.createSuggestion(peopleDeck, roomDeck, weaponDeck);
 			if (suggestion.equals(new Solution(peopleDeck.get(0), bridgeCard, weaponDeck.get(0)))) {
-				equivalenceTracker++;
+				foundSolution = true;
 			}
 		}
-		assertTrue(equivalenceTracker > 0);
+		assertTrue(foundSolution);
 	}	
 	
 	//Testing for Computer AI target selection
@@ -259,7 +262,7 @@ public class gameSetupTests {
 		//player rolls a 1 for pathlength
 		int roll = 2;
 		//test that bridge is selected as an unseen room and not other spots
-		assertTrue(board.getCell(3, 12).equals(cpuPlayer.findTarget(roll)));
+		assertTrue(board.getCell(3, 12).equals(cpuPlayer.findTarget(roll, roomDeck)));
 		
 		//move player a bit above the engine room
 		cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 20, 0);
@@ -272,7 +275,7 @@ public class gameSetupTests {
 		roll = 16;
 		
 		//testing that only the unseen room of various options is picked
-		assertTrue(board.getCell(30, 9).equals(cpuPlayer.findTarget(roll)));
+		assertTrue(board.getCell(30, 9).equals(cpuPlayer.findTarget(roll, roomDeck)));
 		
 		//move player a bit above the engine room
 		cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 24, 0);
@@ -282,8 +285,14 @@ public class gameSetupTests {
 		//impossible huge roll so we get multiple rooms as options
 		roll = 1;
 		board.getCell(24, 1).setOccupied(true);
+		boolean targetSelected = false;
+		for (int i = 0; i < 100; i++) {
+			if(board.getCell(23, 0).equals(cpuPlayer.findTarget(roll, roomDeck))) {
+				targetSelected = true;
+			}
+		}
 		//testing that no room is picked of various options when all rooms have been seen
-		assertTrue(board.getCell(23, 0).equals(cpuPlayer.findTarget(roll)));
+		assertTrue(targetSelected);
 		
 	}
 				

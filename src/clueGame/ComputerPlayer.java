@@ -67,8 +67,38 @@ public class ComputerPlayer extends Player {
 		return new Solution(playerCard, roomCard, weaponCard);
 	}
 	
-	public BoardCell findTarget(int pathlength) {
-		return null;
+	public BoardCell findTarget(int pathlength, ArrayList<Card> roomDeck) {
+		//grab the board and calculate targets from player location for roll amount
+		Board board = Board.getInstance();
+		board.calcTargets(board.getCell(this.row, this.column), pathlength);
+		Set<BoardCell> targets = board.getTargets();
+		
+		//if targets is empty, return null
+		if(targets.size() == 0) {
+			return board.getCell(row, column);
+		}
+		
+		//Make a new array for choices AI can make and populate it with unseen rooms in range
+		ArrayList<BoardCell> choices = new ArrayList<BoardCell>();
+		for (BoardCell cell: targets) {
+			if(cell.isRoomCenter()) {
+				for(Card card: roomDeck) {
+					if(card.getCardName().equals(board.getRoom(cell).getName()) && !seen.contains(card)) {
+						choices.add(cell);
+					}
+				}
+			}
+		}
+		//if no seen rooms are in range, populate choices array with all targets around
+		if(choices.size() == 0) {
+			for(BoardCell target: targets) {
+				choices.add(target);
+			}
+		}
+		//return random from choices
+		Random rand = new Random();
+		int randNum = rand.nextInt(choices.size());
+		return choices.get(randNum);
 	}
 
 }
