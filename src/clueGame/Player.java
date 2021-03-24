@@ -10,6 +10,7 @@ public abstract class Player {
 	protected int row;				//The current row number that the player is on
 	protected int column;			//The current column number that the player is on
 	protected Set<Card> hand;		//The player's hand of cards
+	protected Set<Card> seen;		//Cards that the player has seen
 
 	//Default constructor takes in name, color, row, and column
 	public Player(String name, Color color, int row, int column) {
@@ -19,10 +20,15 @@ public abstract class Player {
 		this.row = row;
 		this.column = column;
 		hand = new HashSet<Card>();
+		seen = new HashSet<Card>();
 	}
 	
 	//Abstract method used to update the player's hand
 	public abstract void updateHand(Card card);
+	
+	//Abstract method used to update the player's seen cards
+	public abstract void updateSeen(Card card);
+		
 	
 	//Getter for hand
 	public Set<Card> getHand() {

@@ -22,6 +22,7 @@ public class gameSetupTests {
 	private static Card thrawnCard, vaderCard, tarkinCard, moffCard, admiralCard, palpatineCard, 
 	engineCard, bridgeCard, dockingCard, messCard, maintenanceCard, trashCard, armoryCard, navCard, quartersCard,
 	blasterCard, saberCard, spannerCard, fusionCard, shockCard, detonatorCard;
+	private static ArrayList<Card> peopleDeck, roomDeck, weaponDeck;
 
 	@BeforeAll
 	public static void setUp() {
@@ -31,30 +32,58 @@ public class gameSetupTests {
 		board.setConfigFiles("ClueLayout.csv", "ClueSetup.txt");
 		// Initialize will load BOTH config files
 		board.initialize();
+		
 		//People cards (6)
+		peopleDeck = new ArrayList<Card>();
 		thrawnCard = new Card(CardType.PERSON, "Admiral Thrawn");
 		vaderCard = new Card(CardType.PERSON, "Darth Vader");
 		tarkinCard = new Card(CardType.PERSON, "Grand Moff Tarkin");
 		moffCard = new Card(CardType.PERSON, "Moff Jerjerodd");
 		admiralCard = new Card(CardType.PERSON, "Rear Admiral Chiraneau");
 		palpatineCard = new Card(CardType.PERSON, "Emperor Palpatine");
+		peopleDeck.add(thrawnCard);
+		peopleDeck.add(vaderCard);
+		peopleDeck.add(tarkinCard);
+		peopleDeck.add(moffCard);
+		peopleDeck.add(admiralCard);
+		peopleDeck.add(palpatineCard);
+		
 		//Room cards (9)
+		roomDeck = new ArrayList<Card>();
 		engineCard = new Card(CardType.ROOM, "Engine Room");
 		bridgeCard = new Card(CardType.ROOM, "Bridge");
 		dockingCard = new Card(CardType.ROOM, "Docking Bay");
 		messCard = new Card(CardType.ROOM, "Mess Hall");
-		maintenanceCard = new Card(CardType.ROOM, "Maintenance Room");
+		maintenanceCard = new Card(CardType.ROOM, "Maintenance");
 		trashCard = new Card(CardType.ROOM, "Trash Compactor");
 		armoryCard = new Card(CardType.ROOM, "Armory");
 		navCard = new Card(CardType.ROOM, "Navigation");
 		quartersCard = new Card(CardType.ROOM, "Captain's Quarters");
+		roomDeck.add(engineCard);
+		roomDeck.add(bridgeCard);
+		roomDeck.add(dockingCard);
+		roomDeck.add(messCard);
+		roomDeck.add(maintenanceCard);
+		roomDeck.add(trashCard);
+		roomDeck.add(armoryCard);
+		roomDeck.add(navCard);
+		roomDeck.add(quartersCard);
+		
+		
 		//Weapon Cards (6)
+		weaponDeck = new ArrayList<Card>();
 		blasterCard = new Card(CardType.WEAPON, "Blaster");
 		saberCard = new Card(CardType.WEAPON, "Lightsaber");
 		spannerCard = new Card(CardType.WEAPON, "Hydrospanner");
 		fusionCard = new Card(CardType.WEAPON, "Fusion Cutter");
 		shockCard = new Card(CardType.WEAPON, "Shock Stick");
 		detonatorCard = new Card(CardType.WEAPON, "Thermal Detonator");	
+		weaponDeck.add(blasterCard);
+		weaponDeck.add(saberCard);
+		weaponDeck.add(spannerCard);
+		weaponDeck.add(fusionCard);
+		weaponDeck.add(shockCard);
+		weaponDeck.add(detonatorCard);	
 	}
 	
 	//Test players created properly
@@ -187,4 +216,40 @@ public class gameSetupTests {
 		assertEquals(null, board.processSuggestion(players, 3, new Solution(palpatineCard, messCard, blasterCard)));
 	}
 	
+	@Test
+	public void testSuggestionCreation() {
+		ComputerPlayer cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 3, 12);
+		
+		for (int i = 1; i < peopleDeck.size(); i++) {
+			cpuPlayer.updateHand(peopleDeck.get(i));
+			cpuPlayer.updateHand(weaponDeck.get(i));
+		}
+		for (int i = 1; i < roomDeck.size(); i++) {
+			cpuPlayer.updateHand(roomDeck.get(i));
+		}
+		Solution suggestion = cpuPlayer.createSuggestion(peopleDeck, roomDeck, weaponDeck);
+		assertTrue(suggestion.equals(new Solution(peopleDeck.get(0), bridgeCard, weaponDeck.get(0))));
+		
+		
+		cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 3, 12);
+		
+		for (int i = 2; i < peopleDeck.size(); i++) {
+			cpuPlayer.updateHand(peopleDeck.get(i));
+			cpuPlayer.updateHand(weaponDeck.get(i));
+		}
+		for (int i = 2; i < roomDeck.size(); i++) {
+			cpuPlayer.updateHand(roomDeck.get(i));
+		}
+		
+		int equivalenceTracker = 0;
+		for (int i = 0; i < 500; i++) {
+			suggestion = cpuPlayer.createSuggestion(peopleDeck, roomDeck, weaponDeck);
+			if (suggestion.equals(new Solution(peopleDeck.get(0), bridgeCard, weaponDeck.get(0)))) {
+				equivalenceTracker++;
+			}
+		}
+		assertTrue(equivalenceTracker > 0);
+	}	
+				
+				
 }

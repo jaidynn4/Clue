@@ -15,4 +15,10 @@ public class HumanPlayer extends Player {
 		hand.add(card);
 	}
 
+	//Add a card to the player's seen cards list
+	//TODO add more functionality
+	@Override
+	public void updateSeen(Card card) {
+		seen.add(card);
+	}
 }
