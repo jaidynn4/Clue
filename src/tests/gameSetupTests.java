@@ -17,6 +17,9 @@ public class gameSetupTests {
 	// NOTE: I made Board static because I only want to set it up one
 	// time (using @BeforeAll), no need to do setup before each test.
 	private static Board board;
+	private static Card thrawnCard, vaderCard, tarkinCard, moffCard, admiralCard, palpatineCard, 
+	engineCard, bridgeCard, dockingCard, messCard, maintenanceCard, trashCard, armoryCard, navCard, quartersCard,
+	blasterCard, saberCard, spannerCard, fusionCard, shockCard, detonatorCard;
 
 	@BeforeAll
 	public static void setUp() {
@@ -26,6 +29,30 @@ public class gameSetupTests {
 		board.setConfigFiles("ClueLayout.csv", "ClueSetup.txt");
 		// Initialize will load BOTH config files
 		board.initialize();
+		//People cards (6)
+		thrawnCard = new Card(CardType.PERSON, "Admiral Thrawn");
+		vaderCard = new Card(CardType.PERSON, "Darth Vader");
+		tarkinCard = new Card(CardType.PERSON, "Grand Moff Tarkin");
+		moffCard = new Card(CardType.PERSON, "Moff Jerjerodd");
+		admiralCard = new Card(CardType.PERSON, "Rear Admiral Chiraneau");
+		palpatineCard = new Card(CardType.PERSON, "Emperor Palpatine");
+		//Room cards (9)
+		engineCard = new Card(CardType.ROOM, "Engine Room");
+		bridgeCard = new Card(CardType.ROOM, "Bridge");
+		dockingCard = new Card(CardType.ROOM, "Docking Bay");
+		messCard = new Card(CardType.ROOM, "Mess Hall");
+		maintenanceCard = new Card(CardType.ROOM, "Maintenance Room");
+		trashCard = new Card(CardType.ROOM, "Trash Compactor");
+		armoryCard = new Card(CardType.ROOM, "Armory");
+		navCard = new Card(CardType.ROOM, "Navigation");
+		quartersCard = new Card(CardType.ROOM, "Captain's Quarters");
+		//Weapon Cards (6)
+		blasterCard = new Card(CardType.WEAPON, "Blaster");
+		saberCard = new Card(CardType.WEAPON, "Lightsaber");
+		spannerCard = new Card(CardType.WEAPON, "Hydrospanner");
+		fusionCard = new Card(CardType.WEAPON, "Fusion Cutter");
+		shockCard = new Card(CardType.WEAPON, "Shock Stick");
+		detonatorCard = new Card(CardType.WEAPON, "Thermal Detonator");	
 	}
 	
 	//Test players created properly
@@ -84,5 +111,19 @@ public class gameSetupTests {
 		}
 		
 		
+	}
+	
+	//Test for accusations
+	@Test
+	public void testAccusation() {
+		board.setTheAnswer(thrawnCard, bridgeCard, blasterCard);
+		//check correct answer is returning true
+		assertTrue(board.checkAccusation(new Solution(thrawnCard, bridgeCard, blasterCard)));
+		//solutions with 1 false entry all return false
+		assertTrue(!board.checkAccusation(new Solution(vaderCard, bridgeCard, blasterCard)));
+		assertTrue(!board.checkAccusation(new Solution(thrawnCard, engineCard, blasterCard)));
+		assertTrue(!board.checkAccusation(new Solution(thrawnCard, bridgeCard, saberCard)));
+		//all wrong solution returns false
+		assertTrue(!board.checkAccusation(new Solution(palpatineCard, armoryCard, detonatorCard)));
 	}
 }

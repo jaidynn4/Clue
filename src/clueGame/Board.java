@@ -406,6 +406,15 @@ public class Board {
 	public Solution getTheAnswer() {
 		return theAnswer;
 	}
+	
+	public void setTheAnswer(Card person, Card room, Card weapon) {
+		this.theAnswer = new Solution(person, room, weapon);
+	}
+	
+	public boolean checkAccusation(Solution accusation) {
+		return theAnswer.equals(accusation);
+	}
+
 
 	//Getter for the room object from char
 	public Room getRoom(char icon) {

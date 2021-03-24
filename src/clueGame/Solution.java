@@ -28,5 +28,17 @@ public class Solution {
 		return weapon;
 	}
 	
+	public boolean equals(Solution solution2) {
+		if (this.person != solution2.person) {
+			return false;
+		}
+		if (this.room != solution2.room) {
+			return false;
+		}
+		if (this.weapon != solution2.weapon) {
+			return false;
+		}
+		return true;
+	}
 	
 }
