@@ -178,11 +178,13 @@ public class gameSetupTests {
 		
 		
 		//return first card seen and do not continue
-		assertEquals(shockCard, board.processSuggestion(player2, new Solution(thrawnCard, messCard, shockCard)));
+		assertEquals(shockCard, board.processSuggestion(players, 1, new Solution(thrawnCard, messCard, shockCard)));
 		//testing that last card of last player is returned if it is only option
-		assertEquals(messCard, board.processSuggestion(player1, new Solution(moffCard, messCard, spannerCard)));
+		assertEquals(messCard, board.processSuggestion(players, 0, new Solution(moffCard, messCard, spannerCard)));
 		//testing null returned if card not in any hands
-		assertEquals(null, board.processSuggestion(player1, new Solution(palpatineCard, navCard, spannerCard)));
+		assertEquals(null, board.processSuggestion(players, 0, new Solution(palpatineCard, navCard, spannerCard)));
+		//testing when only the accuser has the card
+		assertEquals(null, board.processSuggestion(players, 3, new Solution(palpatineCard, messCard, blasterCard)));
 	}
 	
 }

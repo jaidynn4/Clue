@@ -416,8 +416,24 @@ public class Board {
 	}
 
 	//check a suggestion and have players disprove it
-	public Card processSuggestion(Player accuser, Solution suggestion) {
-		return null;
+	public Card processSuggestion(Player[] players, int accuserIndex, Solution suggestion) {
+		int index = accuserIndex;
+		while(true) {
+			index++;
+			//if end of players go to start of list, as we may start later into it
+			if(index == players.length) {
+				index = 0;
+			}
+			//If we loop back through all players without returning, return null
+			if (index == accuserIndex) {
+				return null;
+			}
+			//have each player try to disprove, and return the first one we get
+			Card card = players[index].disproveSuggestion(suggestion);
+			if (card != null) {
+				return card;
+			}
+		}
 	}
 
 	//Getter for the room object from char
