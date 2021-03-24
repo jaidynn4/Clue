@@ -30,8 +30,28 @@ public abstract class Player {
 	}
 
 	public Card disproveSuggestion(Solution suggestion) {
-		//TODO method stub
-		return null;
+		Card[] cards = new Card[3];
+		cards[0] = suggestion.getPerson();
+		cards[1] = suggestion.getRoom();
+		cards[2] = suggestion.getWeapon();
+		
+		ArrayList<Card> matches = new ArrayList<Card>();
+		int matchIndex = 0;
+		
+		for (Card card: hand) {
+			for (int i = 0; i < 3; i++) {
+				if (card == cards[i]) {
+					matches.add(cards[i]);
+					matchIndex++;
+				}
+			}
+		}
+		if (matches.size() == 0) {
+			return null;
+		}
+		Random rand = new Random();
+		int randNum = rand.nextInt(matches.size());
+		return matches.get(randNum);
 	}
 	
 	//Getter for name
