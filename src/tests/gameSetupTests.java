@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -126,4 +128,32 @@ public class gameSetupTests {
 		//all wrong solution returns false
 		assertTrue(!board.checkAccusation(new Solution(palpatineCard, armoryCard, detonatorCard)));
 	}
+	
+	//Test for a Player disproving suggestions
+	@Test
+	public void testDisproval() {
+		Player player = new ComputerPlayer("Playername", Color.black, 1, 1);
+		player.updateHand(thrawnCard);
+		player.updateHand(armoryCard);
+		player.updateHand(detonatorCard);
+		
+		//Test when a player has multiple cards from the suggestion
+		//Must randomly return each card at least once
+		Set<Card> seen = new HashSet<Card>();
+		for (int i = 0; i < 500; i++) {
+			seen.add(player.disproveSuggestion(new Solution(thrawnCard, armoryCard, detonatorCard)));
+		}
+		assertEquals(seen.size(), 3);
+		
+		//Tests when a player has one of each card type matching the suggestion
+		assertEquals(detonatorCard, player.disproveSuggestion(new Solution(palpatineCard, messCard, detonatorCard)));
+		assertEquals(thrawnCard, player.disproveSuggestion(new Solution(thrawnCard, messCard, saberCard)));
+		assertEquals(armoryCard, player.disproveSuggestion(new Solution(vaderCard, armoryCard, spannerCard)));
+		
+		//Test when a player has none of the cards from the suggestion
+		assertEquals(null, player.disproveSuggestion(new Solution(vaderCard, navCard, spannerCard)));
+	}
+	
+	
+	
 }

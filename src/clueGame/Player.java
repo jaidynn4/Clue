@@ -29,6 +29,11 @@ public abstract class Player {
 		return hand;
 	}
 
+	public Card disproveSuggestion(Solution suggestion) {
+		//TODO method stub
+		return null;
+	}
+	
 	//Getter for name
 	public String getName() {
 		return name;
