@@ -13,12 +13,11 @@ import javax.swing.text.JTextComponent;
 public class GameControlPanel extends JPanel {
 	private JTextField theName;
 	private JTextField theRoll;
-	private JTextField theGuess;	//Text field displaying guess
+	private JTextField theGuess;		//Text field displaying guess
 	private JTextField theGuessResult;	//Text field displaying guess result
 	
 	
 	public GameControlPanel() {
-		//TODO constructor
 		setLayout(new GridLayout(2,0));
 		JPanel panel = createTopPanel();
 		add(panel);
