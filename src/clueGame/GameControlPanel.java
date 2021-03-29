@@ -58,11 +58,17 @@ public class GameControlPanel extends JPanel {
 	private JPanel createTurnPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(2,1));
+		
+		JPanel namePanel = new JPanel();
 		JLabel nameLabel = new JLabel("Whose turn?");
 		panel.add(nameLabel);
+		panel.add(namePanel);
+		
+		JPanel textPanel = new JPanel();
 		theName = new JTextField();
 		theName.setEditable(false);
 		panel.add(theName);
+		panel.add(textPanel);
 		
 		return panel;
 	}
@@ -70,7 +76,6 @@ public class GameControlPanel extends JPanel {
 	//Create a panel to display the die result
 	private JPanel createDiePanel() {
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(2,2));
 		
 		JLabel dieLabel = new JLabel("Roll:");
 		panel.add(dieLabel);
@@ -113,7 +118,9 @@ public class GameControlPanel extends JPanel {
 	
 	//Set the player and die roll information in the respective text fields
 	public void setTurn(Player player, int dieRoll) {
+		theName.setEditable(true);
 		theName.setText(player.getName());
+		theName.setEditable(false);
 		theName.setBackground(player.getColor());
 		theRoll.setText(String.valueOf(dieRoll));
 	}
