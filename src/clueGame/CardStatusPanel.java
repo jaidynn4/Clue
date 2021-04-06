@@ -52,5 +52,6 @@ public class CardStatusPanel extends JPanel {
 		JTextField card = new JTextField(name);
 		card.setBackground(color);
 		add(card);
+		updateUI();
 	}
 }

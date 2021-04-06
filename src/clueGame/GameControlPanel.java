@@ -18,6 +18,7 @@ public class GameControlPanel extends JPanel {
 	
 	
 	public GameControlPanel() {
+		setSize(180, 750);
 		setLayout(new GridLayout(2,0));
 		JPanel panel = createTopPanel();
 		add(panel);
@@ -134,20 +135,4 @@ public class GameControlPanel extends JPanel {
 		theGuessResult.setText(guessResult);
 	}
 	
-	
-	
-	public static void main(String[] args) {
-		GameControlPanel panel = new GameControlPanel();		//Create the panel
-		JFrame frame = new JFrame();							//Create the frame
-		frame.setContentPane(panel);							//Put the panel in the frame
-		frame.setSize(750, 180); 								//Size the frame
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 	//Allow the panel to close
-		frame.setVisible(true); 								//Make it visible
-		
-		
-		//Test filling in the data
-		panel.setTurn(new ComputerPlayer("Col. Mustard", Color.orange, 0, 0), 5);
-		panel.setGuess("I have no guess!");
-		panel.setGuessResult("So you have nothing?");
-	}
 }

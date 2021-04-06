@@ -18,6 +18,7 @@ public class CardsDisplayPanel extends JPanel {
 	//Constructor
 	public CardsDisplayPanel() {
 		super();
+		setSize(180, 750); 	
 		setLayout(new GridLayout(3, 1));
 		setBorder(new TitledBorder (new EtchedBorder(), "Known Cards"));
 		createCategoryPanels();
@@ -48,26 +49,5 @@ public class CardsDisplayPanel extends JPanel {
 	//Getter for weaponsPanel
 	public CardTypePanel getWeaponsPanel() {
 		return weaponsPanel;
-	}
-		
-	//Main method to run the test code
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();							//Create the frame
-		CardsDisplayPanel panel = new CardsDisplayPanel();		//Create the panel
-		
-		//Testing functionality of updatePanel() method in CardStatusPanel class
-		panel.getWeaponsPanel().getHandPanel().updatePanel("Blaster", Color.white);
-		panel.getWeaponsPanel().getSeenPanel().updatePanel("Lightsaber", Color.red);
-		panel.getWeaponsPanel().getHandPanel().updatePanel("Hydrospanner", Color.white);
-		panel.getWeaponsPanel().getSeenPanel().updatePanel("Thermal Detonator", Color.gray);
-		panel.getPeoplePanel().getSeenPanel().updatePanel("Admiral Thrawn", Color.yellow);
-		panel.getPeoplePanel().getSeenPanel().updatePanel("Grand Moff Tarkin", Color.blue);
-		panel.getPeoplePanel().getSeenPanel().updatePanel("Emperor Palpatine", Color.yellow);
-
-		frame.setContentPane(panel);							//Put the panel in the frame
-		frame.setSize(180, 750); 								//Size the frame
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 	//Allow the panel to close
-		frame.setVisible(true); 								//Make it visible
-		
 	}
 }
