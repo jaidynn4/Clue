@@ -14,16 +14,16 @@ Room, Storage, S
 Space, Unused, X
 Space, Walkway, W
 //Player Info
-Player, yellow, Bastila Shan, 0, 5
-Player, white, T3-M4, 17, 0
-Player, darkGray, Canderous Ordo, 4, 0
-Player, pink, Juhani, 31, 18
-Player, red, HK-47, 6, 24
-Player, black, Revan, 0, 19
-Player, orange, Carth Onasi, 0, 0
-Player, green, Jolee Bindo, 0, 1
-Player, cyan, Mission Vao, 0, 2
-Player, lightGray, Zaalbar, 0, 3
+Player, yellow, Bastila Shan, 11, 3
+Player, white, T3-M4, 18, 11
+Player, darkGray, Canderous Ordo, 24, 32
+Player, pink, Juhani, 13, 23
+Player, red, HK-47, 40, 29
+Player, black, Revan, 19, 26
+Player, orange, Carth Onasi, 4, 15
+Player, green, Jolee Bindo, 28, 13
+Player, cyan, Mission Vao, 12, 31
+Player, lightGray, Zaalbar, 23, 20
 //Weapon Info
 Weapon, Repeating Blaster
 Weapon, Disruptor Rifle
