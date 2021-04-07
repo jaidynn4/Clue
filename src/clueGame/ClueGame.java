@@ -22,6 +22,7 @@ public class ClueGame extends JFrame {
 		add(bPanel, BorderLayout.CENTER);
 		
 		setSize(800, 800); 								//Size the frame
+		setTitle("Clue Game - Star Wars Edition");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Allow the panel to close
 		setVisible(true); 								//Make it visible
 	}

@@ -455,9 +455,11 @@ public class Board extends JPanel {
 			}
 		}
 		
-		for(char icon: roomMap.keySet()) {
-			Room room = getRoom(icon);
+		for(Room room: roomMap.values()) {
 			room.draw(g, cellWidth, cellHeight, offset);
+		}
+		for(Player player: playerMap.values()) {
+			player.draw(g, cellWidth, cellHeight, offset);
 		}
 	}
 	

@@ -1,6 +1,7 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.util.*;
 
 public abstract class Player {
@@ -59,6 +60,14 @@ public abstract class Player {
 		int randNum = rand.nextInt(matches.size());
 		return matches.get(randNum);
 	}
+	
+	public void draw(Graphics g, int cellWidth, int cellHeight, int offset) {
+		g.setColor(color);
+		g.fillOval(cellWidth*column+offset, cellHeight*row+offset, cellWidth, cellHeight);
+		g.setColor(Color.BLACK);
+		g.drawOval(cellWidth*column+offset,  cellHeight*row+offset, cellWidth,  cellHeight);
+	}
+	
 	
 	//Getter for name
 	public String getName() {
