@@ -440,7 +440,7 @@ public class Board extends JPanel {
 		}
 	}
 
-	
+	//runs all the graphics commands for the board to make cells, rooms, doors, and players
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		int offset = 10;
@@ -449,21 +449,26 @@ public class Board extends JPanel {
 		int cellWidth = (getWidth() - 2*offset) / numColumns;
 		int cellHeight = (getHeight() - 2*offset) / numRows;
 		
+		//start will all cells, including rooms
 		for(BoardCell[] cells: grid) {
 			for(BoardCell cell: cells) {
 				cell.draw(g, cellWidth, cellHeight, offset);
 			}
 		}
+		
+		//draw all the doors by looping through and calling the boardcells drawDoors
 		for(BoardCell[] cells: grid) {
 			for(BoardCell cell: cells) {
 				cell.drawDoors(g, cellWidth, cellHeight, offset);
 			}
 		}
 		
-		
+		//this draws the room labels all over the board
 		for(Room room: roomMap.values()) {
 			room.draw(g, cellWidth, cellHeight, offset);
 		}
+		
+		//places player ovals at their start locations
 		for(Player player: playerMap.values()) {
 			player.draw(g, cellWidth, cellHeight, offset);
 		}

@@ -61,7 +61,9 @@ public abstract class Player {
 		return matches.get(randNum);
 	}
 	
+	//Draw the oval/circle for the player in the cell. Uses same params as draw for cell, so location is exact.
 	public void draw(Graphics g, int cellWidth, int cellHeight, int offset) {
+		//fill first so border goes over top
 		g.setColor(color);
 		g.fillOval(cellWidth*column+offset, cellHeight*row+offset, cellWidth, cellHeight);
 		g.setColor(Color.BLACK);

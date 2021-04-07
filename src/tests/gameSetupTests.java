@@ -55,10 +55,10 @@ public class gameSetupTests {
 		dockingCard = new Card(CardType.ROOM, "Docking Bay");
 		messCard = new Card(CardType.ROOM, "Mess Hall");
 		maintenanceCard = new Card(CardType.ROOM, "Maintenance");
-		trashCard = new Card(CardType.ROOM, "Trash Compactor");
+		trashCard = new Card(CardType.ROOM, "Compactor");
 		armoryCard = new Card(CardType.ROOM, "Armory");
 		navCard = new Card(CardType.ROOM, "Navigation");
-		quartersCard = new Card(CardType.ROOM, "Captain's Quarters");
+		quartersCard = new Card(CardType.ROOM, "Quarters");
 		roomDeck.add(engineCard);
 		roomDeck.add(bridgeCard);
 		roomDeck.add(dockingCard);
@@ -100,7 +100,7 @@ public class gameSetupTests {
 		Color checkColor = Color.white;
 		BoardCell playerCell = board.getCell(board.getPlayer(checkColor).getRow(), board.getPlayer(checkColor).getColumn());
 		assertEquals(board.getCell(0,5), playerCell);
-		checkColor = Color.gray;
+		checkColor = Color.magenta;
 		playerCell = board.getCell(board.getPlayer(checkColor).getRow(), board.getPlayer(checkColor).getColumn());
 		assertEquals(board.getCell(0,19), playerCell);
 		checkColor = Color.blue;

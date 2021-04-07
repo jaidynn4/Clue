@@ -23,8 +23,6 @@ public class GameControlPanel extends JPanel {
 		JPanel panel = createTopPanel();
 		add(panel);
 		
-		
-		
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new GridLayout(0,2));
 		

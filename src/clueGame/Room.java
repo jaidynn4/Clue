@@ -18,23 +18,28 @@ public class Room {
 		this.isRoom = isRoom;
 	}
 	
+	//Draws the name of the room
 	public void draw(Graphics g, int cellWidth, int cellHeight, int offset) {
-		
-		try {
-			if(isRoom) {
+		//If the room is of type Room, find its label cell and print the room name.	
+		if(isRoom) {
+			int col = labelCell.getColumn();
+			int row = labelCell.getRow();
+			g.setColor(Color.BLUE);
+			
+			//Set a custom Englibesh font!!!
+			//If this fails, the board will still print room names with the default font.
+			try {
 				File font_file = new File("./data/englbesh.ttf");
 				Font font = Font.createFont(Font.TRUETYPE_FONT, font_file);
-				int col = labelCell.getColumn();
-				int row = labelCell.getRow();
-				g.setColor(Color.BLUE);
 				Font sizedFont = font.deriveFont(11f);
 				g.setFont(sizedFont);
-				g.drawString(name, cellWidth*col+offset, cellHeight*row+offset);
+			} catch(Exception e) {
+				System.out.println(e.getMessage());
 			}
-		} catch(Exception e) {
-			System.out.println(e.getMessage());
+			
+			//Draw the room name
+			g.drawString(name, cellWidth*col+offset, cellHeight*row+offset);
 		}
-		
 	}
 	
 	//Getter for isRoom

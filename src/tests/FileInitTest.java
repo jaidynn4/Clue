@@ -138,7 +138,7 @@ public class FileInitTest {
 		room = board.getRoom( cell ) ;
 		assertTrue( room != null );
 		assertEquals( room.getName(), "Quarters" ) ;
-		assertTrue( cell.getSecretPassage() == 'Q' );
+		assertTrue( cell.getSecretPassage() == 'C' );
 
 		// test a walkway
 		cell = board.getCell(4, 3);

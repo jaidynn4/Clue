@@ -98,12 +98,14 @@ public class BoardCell {
 		return true;
 	}
 
+	//draws all cells in greyscale to meet theme of Imperial Starship
 	public void draw(Graphics g, int cellWidth, int cellHeight, int offset) {
-		
+		//First make all cells and for rooms push out with a slight offset for borders
 		if(isPartOfRoom) {
 			g.setColor(Color.LIGHT_GRAY);
 			g.fillRect(cellWidth*col+offset+1, cellHeight*row+offset+1, cellWidth, cellHeight);
 		} else if (initial =='X') {
+			//unused spaces are just black
 			g.setColor(Color.BLACK);
 			g.fillRect(cellWidth*col+1+offset, cellHeight*row+1+offset, cellWidth-1, cellHeight-1);
 		} else {
@@ -115,20 +117,23 @@ public class BoardCell {
 		
 	}
 	
+	//Loop through again here and draw all the doors after the rooms are created
+	//Set to 1/5th the size of the cell sitting right on the borders so it feels like a energy field blue door
 	public void drawDoors(Graphics g, int cellWidth, int cellHeight, int offset) {
 		g.setColor(Color.BLUE);
+		final int DOOR_SIZE = 5;
 		switch(doorDirection) {
 			case UP:
-				g.fillRect(cellWidth*col+offset, cellHeight*(row)+offset-2, cellWidth, cellHeight/5);
+				g.fillRect(cellWidth*col+offset, cellHeight*(row)+offset-2, cellWidth, DOOR_SIZE);
 				break;
 			case DOWN:
-				g.fillRect(cellWidth*col+offset, cellHeight*(row+1)+offset-1, cellWidth, cellHeight/5);
+				g.fillRect(cellWidth*col+offset, cellHeight*(row+1)+offset-1, cellWidth, DOOR_SIZE);
 				break;
 			case LEFT:
-				g.fillRect(cellWidth*(col)+offset-2, cellHeight*row+offset, cellWidth/5, cellHeight);
+				g.fillRect(cellWidth*(col)+offset-2, cellHeight*row+offset, DOOR_SIZE, cellHeight);
 				break;
 			case RIGHT:
-				g.fillRect(cellWidth*(col+1)+offset-1, cellHeight*row+offset, cellWidth/5, cellHeight);
+				g.fillRect(cellWidth*(col+1)+offset-1, cellHeight*row+offset, DOOR_SIZE, cellHeight);
 				break;
 		}
 	}
