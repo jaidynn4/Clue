@@ -454,6 +454,12 @@ public class Board extends JPanel {
 				cell.draw(g, cellWidth, cellHeight, offset);
 			}
 		}
+		for(BoardCell[] cells: grid) {
+			for(BoardCell cell: cells) {
+				cell.drawDoors(g, cellWidth, cellHeight, offset);
+			}
+		}
+		
 		
 		for(Room room: roomMap.values()) {
 			room.draw(g, cellWidth, cellHeight, offset);

@@ -1,7 +1,9 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.io.File;
 
 public class Room {
 	private String name;			//The name of the room
@@ -17,12 +19,22 @@ public class Room {
 	}
 	
 	public void draw(Graphics g, int cellWidth, int cellHeight, int offset) {
-		if(isRoom) {
-			int col = labelCell.getColumn();
-			int row = labelCell.getRow();
-			g.setColor(Color.BLUE);
-			g.drawString(name, cellWidth*col+offset, cellHeight*row+offset);
+		
+		try {
+			if(isRoom) {
+				File font_file = new File("./data/englbesh.ttf");
+				Font font = Font.createFont(Font.TRUETYPE_FONT, font_file);
+				int col = labelCell.getColumn();
+				int row = labelCell.getRow();
+				g.setColor(Color.BLUE);
+				Font sizedFont = font.deriveFont(11f);
+				g.setFont(sizedFont);
+				g.drawString(name, cellWidth*col+offset, cellHeight*row+offset);
+			}
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
 		}
+		
 	}
 	
 	//Getter for isRoom

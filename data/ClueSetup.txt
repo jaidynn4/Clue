@@ -4,9 +4,9 @@ Room, Docking Bay, D
 Room, Bridge, B
 Room, Maintenance, M
 Room, Armory, A
-Room, Trash Compactor, T
+Room, Compactor, C
 Room, Navigation, N
-Room, Captain's Quarters, C
+Room, Quarters, Q
 Room, Mess Hall, H
 //Other spaces on board
 Space, Unused, X

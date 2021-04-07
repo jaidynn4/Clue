@@ -1,6 +1,7 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.HashSet;
 import java.util.Set;
@@ -98,7 +99,8 @@ public class BoardCell {
 	}
 
 	public void draw(Graphics g, int cellWidth, int cellHeight, int offset) {
-		if(this.isPartOfRoom) {
+		
+		if(isPartOfRoom) {
 			g.setColor(Color.LIGHT_GRAY);
 			g.fillRect(cellWidth*col+offset+1, cellHeight*row+offset+1, cellWidth, cellHeight);
 		} else if (initial =='X') {
@@ -111,6 +113,24 @@ public class BoardCell {
 			g.drawRect(cellWidth*col+offset,  cellHeight*row+offset, cellWidth,  cellHeight);
 		}
 		
+	}
+	
+	public void drawDoors(Graphics g, int cellWidth, int cellHeight, int offset) {
+		g.setColor(Color.BLUE);
+		switch(doorDirection) {
+			case UP:
+				g.fillRect(cellWidth*col+offset, cellHeight*(row)+offset-2, cellWidth, cellHeight/5);
+				break;
+			case DOWN:
+				g.fillRect(cellWidth*col+offset, cellHeight*(row+1)+offset-1, cellWidth, cellHeight/5);
+				break;
+			case LEFT:
+				g.fillRect(cellWidth*(col)+offset-2, cellHeight*row+offset, cellWidth/5, cellHeight);
+				break;
+			case RIGHT:
+				g.fillRect(cellWidth*(col+1)+offset-1, cellHeight*row+offset, cellWidth/5, cellHeight);
+				break;
+		}
 	}
 	
 	
