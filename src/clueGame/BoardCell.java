@@ -1,5 +1,7 @@
 package clueGame;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -95,6 +97,22 @@ public class BoardCell {
 		return true;
 	}
 
+	public void draw(Graphics g, int cellWidth, int cellHeight, int offset) {
+		if(this.isPartOfRoom) {
+			g.setColor(Color.GRAY);
+			g.fillRect(cellWidth*col+offset+1, cellHeight*row+offset+1, cellWidth, cellHeight);
+		} else if (initial =='X') {
+			g.setColor(Color.BLACK);
+			g.fillRect(cellWidth*col+1+offset, cellHeight*row+1+offset, cellWidth-1, cellHeight-1);
+		} else {
+			g.setColor(Color.YELLOW);
+			g.fillRect(cellWidth*col+1+offset, cellHeight*row+1+offset, cellWidth-1, cellHeight-1);
+			g.setColor(Color.BLACK);
+			g.drawRect(cellWidth*col+offset,  cellHeight*row+offset, cellWidth,  cellHeight);
+		}
+	}
+	
+	
 	//Update the adjacencyList with a cell
 	public void addAdjacency(BoardCell cell) {
 		adjacencyList.add(cell);

@@ -1,5 +1,8 @@
 package clueGame;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Room {
 	private String name;			//The name of the room
 	private BoardCell centerCell;	//The center cell of the room
@@ -11,6 +14,15 @@ public class Room {
 		super();
 		this.name = name;
 		this.isRoom = isRoom;
+	}
+	
+	public void draw(Graphics g, int cellWidth, int cellHeight, int offset) {
+		if(isRoom) {
+			int col = labelCell.getColumn();
+			int row = labelCell.getRow();
+			g.setColor(Color.BLUE);
+			g.drawString(name, cellWidth*col+offset, cellHeight*row+offset);
+		}
 	}
 	
 	//Getter for isRoom

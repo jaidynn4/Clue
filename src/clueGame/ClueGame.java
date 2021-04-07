@@ -13,11 +13,13 @@ public class ClueGame extends JFrame {
 	public ClueGame() {
 		gcPanel = new GameControlPanel();				//Create the panel
 		cdPanel = new CardsDisplayPanel();
-		//bPanel = new Board();
+		bPanel = Board.getInstance();
+		bPanel.setConfigFiles("ClueLayout.csv", "ClueSetup.txt");
+		bPanel.initialize();
 		
 		add(gcPanel, BorderLayout.SOUTH);
 		add(cdPanel, BorderLayout.EAST);
-		//add(bPanel, BorderLayout.CENTER);
+		add(bPanel, BorderLayout.CENTER);
 		
 		setSize(800, 800); 								//Size the frame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Allow the panel to close

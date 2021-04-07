@@ -18,7 +18,7 @@ public class CardsDisplayPanel extends JPanel {
 	//Constructor
 	public CardsDisplayPanel() {
 		super();
-		setSize(180, 750); 	
+		setSize(180, 620); 	
 		setLayout(new GridLayout(3, 1));
 		setBorder(new TitledBorder (new EtchedBorder(), "Known Cards"));
 		createCategoryPanels();

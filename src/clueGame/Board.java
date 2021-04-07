@@ -4,9 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 import java.util.List;
+
+import javax.swing.JPanel;
+
 import java.awt.*;
 
-public class Board {
+public class Board extends JPanel {
 	private BoardCell[][] grid;				//The game board
 	private Set<BoardCell> targets;			//List of possible cells to move to
 	private Set<BoardCell> visited;			//List of cells visited in movement path
@@ -27,6 +30,7 @@ public class Board {
 	//Board constructor
 	private Board() {
 		super();
+		setSize(620,620);
 	}
 	
 	//Return the Singleton Pattern instance of the game board and create it if it does not already exist
@@ -436,6 +440,27 @@ public class Board {
 		}
 	}
 
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		int offset = 10;
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		int cellWidth = (getWidth() - 2*offset) / numColumns;
+		int cellHeight = (getHeight() - 2*offset) / numRows;
+		
+		for(BoardCell[] cells: grid) {
+			for(BoardCell cell: cells) {
+				cell.draw(g, cellWidth, cellHeight, offset);
+			}
+		}
+		
+		for(char icon: roomMap.keySet()) {
+			Room room = getRoom(icon);
+			room.draw(g, cellWidth, cellHeight, offset);
+		}
+	}
+	
 	//Getter for the room object from char
 	public Room getRoom(char icon) {
 		return roomMap.get(icon);

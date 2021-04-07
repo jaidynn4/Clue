@@ -18,7 +18,7 @@ public class GameControlPanel extends JPanel {
 	
 	
 	public GameControlPanel() {
-		setSize(180, 750);
+		setSize(800, 180);
 		setLayout(new GridLayout(2,0));
 		JPanel panel = createTopPanel();
 		add(panel);
