@@ -118,7 +118,7 @@ public class FileInitTest {
 		assertFalse( cell.isDoorway()) ;
 
 		// this is a label cell to test
-		cell = board.getCell(19, 4);
+		cell = board.getCell(20, 3);
 		room = board.getRoom( cell ) ;
 		assertTrue( room != null );
 		assertEquals( room.getName(), "Armory" ) ;
