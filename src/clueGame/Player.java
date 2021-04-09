@@ -29,7 +29,9 @@ public abstract class Player {
 	
 	//Abstract method used to update the player's seen cards
 	public abstract void updateSeen(Card card);
-		
+	
+	//Abstract method used to get the target cell for player movement
+	public abstract BoardCell findTarget(int pathlength, ArrayList<Card> roomDeck);
 	
 	//Getter for hand
 	public Set<Card> getHand() {
@@ -63,13 +65,26 @@ public abstract class Player {
 	
 	//Draw the oval/circle for the player in the cell. Uses same params as draw for cell, so location is exact.
 	public void draw(Graphics g, int cellWidth, int cellHeight, int offset) {
+		int numOffset = 1;
+		
+		if(Board.getInstance().getCell(row, column).isRoomCenter()) {
+			numOffset = Board.getInstance().getPlayerList().lastIndexOf(this);;
+		}
+		
 		//fill first so border goes over top
 		g.setColor(color);
-		g.fillOval(cellWidth*column+offset, cellHeight*row+offset, cellWidth, cellHeight);
+		g.fillOval(cellWidth*column+(offset*numOffset), cellHeight*row+offset, cellWidth, cellHeight);
 		g.setColor(Color.BLACK);
-		g.drawOval(cellWidth*column+offset,  cellHeight*row+offset, cellWidth,  cellHeight);
+		g.drawOval(cellWidth*column+(offset*numOffset), cellHeight*row+offset, cellWidth, cellHeight);
+		System.out.println(numOffset);
 	}
 	
+	public void move(int row, int column) {
+		Board.getInstance().getCell(this.row, this.column).setOccupied(false);
+		setRow(row);
+		setColumn(column);
+		Board.getInstance().getCell(this.row, this.column).setOccupied(true);
+	}
 	
 	//Getter for name
 	public String getName() {

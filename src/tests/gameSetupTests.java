@@ -90,7 +90,7 @@ public class gameSetupTests {
 	@Test
 	public void testPlayers() {
 		//Test that we have the right number of players
-		assertEquals(board.getPlayerMap().size(), 6);
+		assertEquals(board.getPlayerList().size(), 6);
 		
 		//Test that there are a human player and a computer player created
 		assertTrue(board.getPlayer(Color.white) instanceof HumanPlayer);
@@ -126,7 +126,7 @@ public class gameSetupTests {
 		ArrayList<Card> allPlayerCards = new ArrayList<Card>();
 		
 		//Test that 3 cards were dealt to each player
-		for(Player player: board.getPlayerMap().values()) {
+		for(Player player: board.getPlayerList()) {
 			assertEquals(player.getHand().size(), 3);
 			
 			//For each card that each player has, ensure that it is not equal to cards in the solution/answer

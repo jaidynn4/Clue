@@ -1,6 +1,7 @@
 package clueGame;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 public class HumanPlayer extends Player {
 
@@ -20,5 +21,11 @@ public class HumanPlayer extends Player {
 	@Override
 	public void updateSeen(Card card) {
 		seen.add(card);
+	}
+	
+	@Override
+	public BoardCell findTarget(int pathlength, ArrayList<Card> roomDeck) {
+		//TODO method stub
+		return null;
 	}
 }

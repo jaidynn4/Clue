@@ -67,13 +67,14 @@ public class ComputerPlayer extends Player {
 		return new Solution(playerCard, roomCard, weaponCard);
 	}
 	
+	@Override
 	public BoardCell findTarget(int pathlength, ArrayList<Card> roomDeck) {
 		//grab the board and calculate targets from player location for roll amount
 		Board board = Board.getInstance();
-		board.calcTargets(board.getCell(this.row, this.column), pathlength);
+		board.calcTargets(board.getCell(row, column), pathlength);
 		Set<BoardCell> targets = board.getTargets();
 		
-		//if targets is empty, return null
+		//if targets is empty, stay in the current location
 		if(targets.size() == 0) {
 			return board.getCell(row, column);
 		}

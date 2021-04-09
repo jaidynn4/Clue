@@ -2,6 +2,7 @@ package clueGame;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -35,8 +36,6 @@ public class ClueGame extends JFrame {
 		
 		ClueGame frame = new ClueGame();						//Create the frame
 		
-		//Test filling in the data for GameControlPanel class
-		frame.gcPanel.setTurn(new ComputerPlayer("Emperor Palpatine", Color.magenta, 0, 0), 5);
 		frame.gcPanel.setGuess("I have no guess!");
 		frame.gcPanel.setGuessResult("So you have nothing?");
 		
@@ -48,5 +47,33 @@ public class ClueGame extends JFrame {
 		frame.cdPanel.getPeoplePanel().getSeenPanel().updatePanel("Admiral Thrawn", Color.yellow);
 		frame.cdPanel.getPeoplePanel().getSeenPanel().updatePanel("Grand Moff Tarkin", Color.blue);
 		frame.cdPanel.getPeoplePanel().getSeenPanel().updatePanel("Emperor Palpatine", Color.yellow);
+		
+		//Get the list of players
+		ArrayList<Player> playerList = frame.bPanel.getPlayerList();
+		
+		//Get the name of the first human player in the player map
+		String humanPlayerName = playerList.get(0).getName();
+		
+		//Make a pop-up pane with a welcome message
+		JOptionPane popup = new JOptionPane();
+		
+		//Display pop-up
+		popup.showMessageDialog(frame,"You are playing as " + humanPlayerName + " and you must solve this mystery before it's TOO LATE!");
+		
+		//Start first turn with player 0, and set isHumanPlayer to true
+		Board.getInstance().setCurrentPlayer(playerList.get(0));
+		Board.getInstance().doNextTurn(true);
+		
+		frame.gcPanel.setTurn(playerList.get(Board.getInstance().getCurrentPlayerIndex()), Board.getInstance().getCurrentRoll());
+
+		
+		
+		
+		
 	}
+
+	public GameControlPanel getGcPanel() {
+		return gcPanel;
+	}
+	
 }

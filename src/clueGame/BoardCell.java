@@ -3,6 +3,8 @@ package clueGame;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +20,8 @@ public class BoardCell {
 	private Set<BoardCell> adjacencyList;							//Set of cells adjacent to this cell
 	boolean isPartOfRoom;											//Holds whether this cell is a room
 	boolean isOccupied;												//Holds whether this cell is occupied
+	boolean	isTarget = false;										//Stores whether this cell is currently a target cell
+	private int x, y;												//Stores the top left coordinates of this cell on the JPanel for the board
 	
 	//TestBoardCell constructor
 	public BoardCell(int row, int column) {
@@ -100,16 +104,27 @@ public class BoardCell {
 
 	//draws all cells in greyscale to meet theme of Imperial Starship
 	public void draw(Graphics g, int cellWidth, int cellHeight, int offset) {
+		x = cellWidth*col+offset+1;
+		y = cellHeight*row+offset+1;
+		
 		//First make all cells and for rooms push out with a slight offset for borders
 		if(isPartOfRoom) {
-			g.setColor(Color.LIGHT_GRAY);
-			g.fillRect(cellWidth*col+offset+1, cellHeight*row+offset+1, cellWidth, cellHeight);
+			if(Board.getInstance().getRoom(initial).getCenterCell().isTarget) {
+				g.setColor(Color.cyan);
+			}else {
+				g.setColor(Color.LIGHT_GRAY);
+			}
+			g.fillRect(x, y, cellWidth, cellHeight);
 		} else if (initial =='X') {
 			//unused spaces are just black
 			g.setColor(Color.BLACK);
-			g.fillRect(cellWidth*col+1+offset, cellHeight*row+1+offset, cellWidth-1, cellHeight-1);
+			g.fillRect(x, y, cellWidth-1, cellHeight-1);
 		} else {
-			g.setColor(Color.GRAY);
+			if(isTarget) {
+				g.setColor(Color.cyan);
+			}else {
+				g.setColor(Color.GRAY);
+			}
 			g.fillRect(cellWidth*col+1+offset, cellHeight*row+1+offset, cellWidth-1, cellHeight-1);
 			g.setColor(Color.BLACK);
 			g.drawRect(cellWidth*col+offset,  cellHeight*row+offset, cellWidth,  cellHeight);
@@ -138,6 +153,19 @@ public class BoardCell {
 		}
 	}
 	
+	//Check if click is within box
+	public boolean containsClick(int mouseX, int mouseY) {
+		Rectangle rect = new Rectangle(x, y, Board.getInstance().getCellWidth(), Board.getInstance().getCellHeight());
+		if (rect.contains(new Point(mouseX, mouseY))) {
+			return true;
+		}
+		return false;
+	}
+	
+	
+	public void setIsTarget(boolean isTarget) {
+		this.isTarget = isTarget;
+	}
 	
 	//Update the adjacencyList with a cell
 	public void addAdjacency(BoardCell cell) {

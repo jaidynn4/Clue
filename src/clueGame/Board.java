@@ -4,10 +4,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 import java.util.List;
-
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class Board extends JPanel {
 	private BoardCell[][] grid;				//The game board
@@ -18,19 +19,27 @@ public class Board extends JPanel {
 	private String layoutConfigFile;		//Stores the filename of the layoutConfigFile
 	private String setupConfigFile;			//Stores the filename of the setupConfigFile
 	private Map<Character, Room> roomMap;	//The map of all rooms that exist on the board
-	private Map<Color, Player>	playerMap;	//The map of all players that exist in the game
+	private ArrayList<Player> playerList;	//The map of all players that exist in the game
 	private ArrayList<Card> theDeck;		//Set representing all cards that exist in the game
 	private ArrayList<Card> playerDeck;		//Set of only player cards
 	private ArrayList<Card> weaponDeck;		//Set of only weapon cards
 	private ArrayList<Card> roomDeck;		//Set of only room cards
 	private Solution theAnswer;				//The Solution to the game
+	private boolean isTurnFinished = false;	//Flags whether the current player turn is finished, default to false
 	private static Board theInstance;		//The Singleton Pattern instance of the board class
+	private Player currentPlayer;
+	private int currentPlayerIndex = 0;
+	private int currentRoll;
+	private int offset;
+	private int cellWidth;
+	private int cellHeight;
 	
 	
 	//Board constructor
 	private Board() {
 		super();
 		setSize(620,620);
+		addMouseListener(new BoardListener());
 	}
 	
 	//Return the Singleton Pattern instance of the game board and create it if it does not already exist
@@ -51,7 +60,7 @@ public class Board extends JPanel {
 		this.weaponDeck = new ArrayList<Card>();
 		this.roomDeck = new ArrayList<Card>();
 		this.roomMap = new HashMap<Character, Room>();
-		this.playerMap = new HashMap<Color, Player>();
+		this.playerList = new ArrayList<Player>();
 		//Load the files with the game board information and handle any exceptions thrown
 		try {
 			loadSetupConfig();
@@ -67,6 +76,18 @@ public class Board extends JPanel {
 	}
 	
 	
+	public int getOffset() {
+		return offset;
+	}
+
+	public int getCellWidth() {
+		return cellWidth;
+	}
+
+	public int getCellHeight() {
+		return cellHeight;
+	}
+
 	//Load the Setup file
 	public void loadSetupConfig() throws BadConfigFormatException {
 		try {
@@ -100,7 +121,7 @@ public class Board extends JPanel {
 				makeCard(data, type);
 				
 			}
-			if(playerMap.size() != 0) {
+			if(playerList.size() != 0) {
 				deal();
 			}
 		} catch (FileNotFoundException e) {
@@ -121,11 +142,11 @@ public class Board extends JPanel {
 			//Default setup makes the first player to appear in the setup file become the human player character
 			if(!humanPlayerExists) {
 				Player player = new HumanPlayer(data[2], playerColor, row, col);
-				playerMap.put(playerColor, player);
+				playerList.add(player);
 				humanPlayerExists = true;
 			} else {
 				Player player = new ComputerPlayer(data[2], playerColor, row, col);
-				playerMap.put(playerColor, player);
+				playerList.add(player);
 			}
 		//Catch the many possible exceptions that the color class wants handled here
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
@@ -199,25 +220,17 @@ public class Board extends JPanel {
 		theDeck.remove(playerCard);
 		theDeck.remove(roomCard);
 		theDeck.remove(weaponCard);
-
-		//Populate an Array of Player objects for ease of indexing
-		Player[] players = new Player[playerMap.values().size()];
-		int index = 0;
-		for(Player player: playerMap.values()) {
-			players[index] = player;
-			index++;
-		}
 		
 		//While there are still cards in theDeck, loop through the players and deal one card to the current player
 		int i = 0;
 		while(theDeck.size() > 0) {
-			if(i == players.length) {
+			if(i == playerList.size()) {
 				i = 0;
 			} else {
 				randNum = rand.nextInt(theDeck.size());
 				Card card = theDeck.get(randNum);
 				theDeck.remove(card);
-				players[i].updateHand(card);
+				playerList.get(i).updateHand(card);
 				i++;
 			}
 		}
@@ -379,12 +392,17 @@ public class Board extends JPanel {
 	
 	//Gets a player based on color
 	public Player getPlayer(Color color) {
-		return playerMap.get(color);
+		for (Player player: playerList) {
+			if (player.getColor() == color) {
+				return player;
+			}
+		}
+		return null;
 	}
 	
 	//Getter for the playerMap
-	public Map<Color, Player> getPlayerMap() {
-		return playerMap;
+	public ArrayList<Player> getPlayerList() {
+		return playerList;
 	}
 	
 	//Getter for theDeck
@@ -443,11 +461,14 @@ public class Board extends JPanel {
 	//runs all the graphics commands for the board to make cells, rooms, doors, and players
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		int offset = 10;
+		
+		offset = 10;
+		cellWidth = (getWidth() - 2*offset) / numColumns;
+		cellHeight = (getHeight() - 2*offset) / numRows;
+		
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
-		int cellWidth = (getWidth() - 2*offset) / numColumns;
-		int cellHeight = (getHeight() - 2*offset) / numRows;
+		
 		
 		//start will all cells, including rooms
 		for(BoardCell[] cells: grid) {
@@ -456,7 +477,7 @@ public class Board extends JPanel {
 			}
 		}
 		
-		//draw all the doors by looping through and calling the boardcells drawDoors
+		//draw all the doors by looping through and calling the boardcell's drawDoors
 		for(BoardCell[] cells: grid) {
 			for(BoardCell cell: cells) {
 				cell.drawDoors(g, cellWidth, cellHeight, offset);
@@ -469,7 +490,7 @@ public class Board extends JPanel {
 		}
 		
 		//places player ovals at their start locations
-		for(Player player: playerMap.values()) {
+		for(Player player: playerList){
 			player.draw(g, cellWidth, cellHeight, offset);
 		}
 	}
@@ -517,4 +538,130 @@ public class Board extends JPanel {
 	public void setNumColumns(int numColumns) {
 		this.numColumns = numColumns;
 	}
+
+	public void handleNext() {
+		if (!isTurnFinished) {
+			JOptionPane popup = new JOptionPane();
+			popup.showMessageDialog(this, "Wait for the current turn to be finished. . .");
+		} else {
+			//pushes to next player in rotation and starts next turn functions
+			isTurnFinished = false;
+			updatePlayer();
+			doNextTurn(currentPlayer instanceof HumanPlayer); //passes boolean on whether or not current player is a human player
+		}
+	}
+	
+	public void updatePlayer() {
+		//grab index of current player and increase it by 1
+		currentPlayerIndex++;
+		
+		//reset index to 0 if we hit end of list
+		if(currentPlayerIndex >= playerList.size()) {
+			currentPlayerIndex = 0;
+		}
+		//set player as next in rotation
+		currentPlayer = playerList.get(currentPlayerIndex);
+	}
+	
+	public int rollDie() {
+		//randomly roll a single die 1-6
+		Random rand = new Random();
+		return rand.nextInt(6) + 1;
+	}
+	
+	public void doNextTurn(boolean isHuman) {
+		currentRoll = rollDie();
+		BoardCell playerCell = getCell(currentPlayer.row, currentPlayer.column);
+		//If player is human, run human turn
+		if(isHuman) {
+			//Make a pop-up pane with a roll display message
+			JOptionPane rollPopup = new JOptionPane();
+			rollPopup.showMessageDialog(this,"You rolled a " + currentRoll + ". Please select a target.");
+			
+			//Set target cells
+			calcTargets(playerCell, currentRoll);
+			for(BoardCell cell: targets) {
+				cell.setIsTarget(true);
+			}
+			
+			if(targets.size() == 0) {
+				//Make a pop-up pane with a display message stating that there are no targets
+				JOptionPane noTargetsPopup = new JOptionPane();
+				noTargetsPopup.showMessageDialog(this,"You have no available movement targets this turn. Please press next.");
+				isTurnFinished = true;
+			}
+			
+		//Else run computer turn
+		} else {
+			//TODO make accusation here
+			BoardCell target = currentPlayer.findTarget(currentRoll, roomDeck);
+			currentPlayer.move(target.getRow(), target.getColumn());
+			//TODO make suggestion here
+			isTurnFinished = true;
+		}
+		repaint();
+	}
+
+	private class BoardListener implements MouseListener {
+		public void mouseClicked(MouseEvent event) {
+			for(BoardCell[] cells: grid) {
+				for(BoardCell cell: cells) {
+					if (cell.containsClick(event.getX(), event.getY())) {
+						if(cell.isTarget) {
+							currentPlayer.move(cell.getRow(), cell.getColumn());
+							isTurnFinished = true;
+						} else if (cell.isPartOfRoom && getRoom(cell).getCenterCell().isTarget){
+							currentPlayer.move(getRoom(cell).getCenterCell().getRow(), getRoom(cell).getCenterCell().getColumn());
+							//TODO Make suggestion here
+							isTurnFinished = true;
+						} else {
+							//Make a pop-up pane with an error display message
+							JOptionPane popup = new JOptionPane();
+							popup.showMessageDialog(Board.getInstance(),"Invalid click, please wait for your turn or select a cyan target.");
+						}
+					}
+				}
+			}
+			if(isTurnFinished) {
+				clearAllTargets();
+			}
+		}
+		
+		//Don't care about these unused methods
+		public void mousePressed(MouseEvent event) {}
+		public void mouseReleased(MouseEvent event) {}
+		public void mouseEntered(MouseEvent event) {}
+		public void mouseExited(MouseEvent event) {}
+	}
+	
+	public void clearAllTargets() {
+		for(BoardCell[] cells: grid) {
+			for(BoardCell cell: cells) {
+				cell.setIsTarget(false);
+			}
+		}
+		repaint();
+	}
+	
+	public int getCurrentPlayerIndex() {
+		return currentPlayerIndex;
+	}
+
+	public void setCurrentPlayerIndex(int currentPlayerIndex) {
+		this.currentPlayerIndex = currentPlayerIndex;
+	}
+
+	
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	public void setCurrentPlayer(Player currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
+
+	public int getCurrentRoll() {
+		return currentRoll;
+	}
+	
 }

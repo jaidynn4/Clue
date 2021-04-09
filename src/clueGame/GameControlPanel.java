@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -47,10 +50,22 @@ public class GameControlPanel extends JPanel {
 		JButton accusation = new JButton("Make Accusation");
 		topPanel.add(accusation);
 		JButton next = new JButton("Next!");
+		NextListener listener = new NextListener();
+		next.addActionListener(listener);
 		topPanel.add(next);
 		
 		return topPanel;
 	}
+	
+	class NextListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			Board theBoard = Board.getInstance();
+			theBoard.handleNext();
+			setTurn(theBoard.getCurrentPlayer(), theBoard.getCurrentRoll());
+			repaint();
+		}
+	}
+	
 	
 	//Create a panel to display the turn information
 	private JPanel createTurnPanel() {
@@ -121,16 +136,19 @@ public class GameControlPanel extends JPanel {
 		theName.setEditable(false);
 		theName.setBackground(player.getColor());
 		theRoll.setText(String.valueOf(dieRoll));
+		repaint();
 	}
 	
 	//Set a guess in the text field
 	public void setGuess(String guess) {
 		theGuess.setText(guess);
+		repaint();
 	}
 	
 	//Set a guess result in the text field
 	public void setGuessResult(String guessResult) {
 		theGuessResult.setText(guessResult);
+		repaint();
 	}
 	
 }
