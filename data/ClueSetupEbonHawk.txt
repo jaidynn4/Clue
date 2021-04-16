@@ -1,10 +1,10 @@
 //Room Info
 Room, Engine Room, E
-Room, Starboard Dorm, D
-Room, Medical Bay, B
+Room, Star. Dorm, D
+Room, Medbay, B
 Room, Main Hold, M
-Room, Port Dorm, A
-Room, Communications, C
+Room, Port Dorm, P
+Room, Comms, C
 Room, Navigation, N
 Room, Exit Ramp, R
 Room, Cargo Hold, H
@@ -22,7 +22,7 @@ Player, red, HK-47, 40, 29
 Player, black, Revan, 19, 26
 Player, orange, Carth Onasi, 4, 15
 Player, green, Jolee Bindo, 28, 13
-Player, cyan, Mission Vao, 12, 31
+Player, blue, Mission Vao, 12, 31
 Player, lightGray, Zaalbar, 23, 20
 //Weapon Info
 Weapon, Repeating Blaster

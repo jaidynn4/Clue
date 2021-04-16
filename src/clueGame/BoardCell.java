@@ -123,7 +123,13 @@ public class BoardCell {
 			if(isTarget) {
 				g.setColor(Color.cyan);
 			}else {
-				g.setColor(Color.GRAY);
+				//If the files chosen correspond to the Ebon Hawk map
+				if(Board.getInstance().getLayoutConfigFile().equals("./data/ClueLayoutEbonHawk.csv") && Board.getInstance().getSetupConfigFile().equals("./data/ClueSetupEbonHawk.txt")) {
+					Color darkRed = new Color(139, 0, 0);
+					g.setColor(darkRed);
+				} else {
+					g.setColor(Color.GRAY);
+				}
 			}
 			g.fillRect(cellWidth*col+1+offset, cellHeight*row+1+offset, cellWidth-1, cellHeight-1);
 			g.setColor(Color.BLACK);

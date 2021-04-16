@@ -18,6 +18,7 @@ Player, yellow, Grand Moff Tarkin, 4, 0
 Player, red, Moff Jerjerrod, 31, 18
 Player, blue, Rear Admiral Chiraneau, 6, 24
 Player, magenta, Emperor Palpatine, 0, 19
+Player, green, Jabba the Hutt, 26, 24
 //Weapon Info
 Weapon, Blaster
 Weapon, Lightsaber

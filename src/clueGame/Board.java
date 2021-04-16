@@ -779,4 +779,11 @@ public class Board extends JPanel {
 		System.exit(0);
 	}
 
+	public String getLayoutConfigFile() {
+		return this.layoutConfigFile;
+	}
+	
+	public String getSetupConfigFile() {
+		return this.setupConfigFile;
+	}
 }
