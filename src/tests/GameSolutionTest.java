@@ -132,11 +132,11 @@ public class GameSolutionTest {
 		Player player2 = new ComputerPlayer("Hal9000", Color.red, 1, 1);
 		Player player3 = new ComputerPlayer("R2D2", Color.blue, 1, 1);
 		Player player4 = new ComputerPlayer("C3P0", Color.yellow, 1, 1);
-		Player[] players = new Player[4];
-		players[0] = player1;
-		players[1] = player2;
-		players[2] = player3;
-		players[3] = player4;
+		ArrayList<Player> players = new ArrayList<Player>();
+		players.add(player1);
+		players.add(player2);
+		players.add(player3);
+		players.add(player4);
 		
 		player1.updateHand(thrawnCard);
 		player1.updateHand(bridgeCard);

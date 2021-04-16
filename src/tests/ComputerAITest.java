@@ -58,7 +58,7 @@ public class ComputerAITest {
 		trashCard = new Card(CardType.ROOM, "Trash Compactor");
 		armoryCard = new Card(CardType.ROOM, "Armory");
 		navCard = new Card(CardType.ROOM, "Navigation");
-		quartersCard = new Card(CardType.ROOM, "Captain's Quarters");
+		quartersCard = new Card(CardType.ROOM, "Quarters");
 		roomDeck.add(engineCard);
 		roomDeck.add(bridgeCard);
 		roomDeck.add(dockingCard);
@@ -91,26 +91,26 @@ public class ComputerAITest {
 		ComputerPlayer cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 3, 12);
 		//set player hand to every card except 1 of each type
 		for (int i = 1; i < peopleDeck.size(); i++) {
-			cpuPlayer.updateHand(peopleDeck.get(i));
-			cpuPlayer.updateHand(weaponDeck.get(i));
+			cpuPlayer.updateSeen(peopleDeck.get(i));
+			cpuPlayer.updateSeen(weaponDeck.get(i));
 		}
 		for (int i = 1; i < roomDeck.size(); i++) {
-			cpuPlayer.updateHand(roomDeck.get(i));
+			cpuPlayer.updateSeen(roomDeck.get(i));
 		}
 		
-		//grab a solution from the cpu player with all cards in hand, besides 3 and check it for top of deck cards
+		//grab a solution from the cpu player with all cards seen, besides 3 and check it for top of deck cards
 		Solution suggestion = cpuPlayer.createSuggestion(peopleDeck, roomDeck, weaponDeck);
 		assertTrue(suggestion.equals(new Solution(peopleDeck.get(0), bridgeCard, weaponDeck.get(0))));
 		
-		//reset player, do all but 2 of each type of card into hand
+		//reset player, do all but 2 of each type of card seen
 		cpuPlayer = new ComputerPlayer("K2-SO", Color.black, 3, 12);
 		
 		for (int i = 2; i < peopleDeck.size(); i++) {
-			cpuPlayer.updateHand(peopleDeck.get(i));
-			cpuPlayer.updateHand(weaponDeck.get(i));
+			cpuPlayer.updateSeen(peopleDeck.get(i));
+			cpuPlayer.updateSeen(weaponDeck.get(i));
 		}
 		for (int i = 2; i < roomDeck.size(); i++) {
-			cpuPlayer.updateHand(roomDeck.get(i));
+			cpuPlayer.updateSeen(roomDeck.get(i));
 		}
 		
 		//loop many times and make sure we see the solution is randomly chosen at least once

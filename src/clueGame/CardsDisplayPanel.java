@@ -50,4 +50,42 @@ public class CardsDisplayPanel extends JPanel {
 	public CardTypePanel getWeaponsPanel() {
 		return weaponsPanel;
 	}
+	
+	public void populateHand(Player player) {
+		for(Card card: player.getHand()) {
+			switch(card.getCardType()) {
+				case PERSON:
+					peoplePanel.getHandPanel().updatePanel(card.getCardName(), Color.white);
+					break;
+				case ROOM:
+					roomsPanel.getHandPanel().updatePanel(card.getCardName(), Color.white);
+					break;
+				case WEAPON:
+					weaponsPanel.getHandPanel().updatePanel(card.getCardName(), Color.white);
+					break;
+			}
+		}
+	}
+	
+	public void updateSeen(Card card) {
+		switch(card.getCardType()) {
+		case PERSON:
+			peoplePanel.getSeenPanel().updatePanel(card.getCardName(), card.getCardHolder().getColor());
+			break;
+		case ROOM:
+			roomsPanel.getSeenPanel().updatePanel(card.getCardName(), card.getCardHolder().getColor());
+			break;
+		case WEAPON:
+			weaponsPanel.getSeenPanel().updatePanel(card.getCardName(), card.getCardHolder().getColor());
+			break;
+		}
+	}
+	
+	public void updateHumanSeenLists(Player player) {
+		peoplePanel.getSeenPanel().updateHuman(player, CardType.PERSON);
+		roomsPanel.getSeenPanel().updateHuman(player, CardType.ROOM);
+		weaponsPanel.getSeenPanel().updateHuman(player, CardType.WEAPON);
+		updateUI();
+	}
+	
 }

@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.Map;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
@@ -48,10 +49,10 @@ public class GameControlPanel extends JPanel {
 		topPanel.add(createDiePanel());
 		
 		JButton accusation = new JButton("Make Accusation");
+		accusation.addActionListener(new AccusationListener());
 		topPanel.add(accusation);
 		JButton next = new JButton("Next!");
-		NextListener listener = new NextListener();
-		next.addActionListener(listener);
+		next.addActionListener(new NextListener());
 		topPanel.add(next);
 		
 		return topPanel;
@@ -62,7 +63,27 @@ public class GameControlPanel extends JPanel {
 			Board theBoard = Board.getInstance();
 			theBoard.handleNext();
 			setTurn(theBoard.getCurrentPlayer(), theBoard.getCurrentRoll());
+			if(theBoard.getLatestGuess() == null) {
+				setGuess("No guess made this turn.");
+				setGuessResult("None.", Color.white);
+			} else {
+				setGuess(theBoard.getLatestGuess().toString());
+				setGuessResult("Not Disproven. . .", Color.white);
+				if(theBoard.getLatestDisprove() != null) {
+					Color guessDisproverColor = theBoard.getLatestDisprove().getCardHolder().getColor();
+					String playerName = theBoard.getLatestDisprove().getCardHolder().getName();
+					setGuessResult("Disproved by " + playerName, guessDisproverColor);
+				}
+			}
 			repaint();
+		}
+	}
+	
+	
+	class AccusationListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			Board theBoard = Board.getInstance();
+			theBoard.handleHumanPlayerAccusation();
 		}
 	}
 	
@@ -134,7 +155,8 @@ public class GameControlPanel extends JPanel {
 		theName.setEditable(true);
 		theName.setText(player.getName());
 		theName.setEditable(false);
-		theName.setBackground(player.getColor());
+		Border border = BorderFactory.createLineBorder(player.getColor(), 5);
+		theName.setBorder(border);
 		theRoll.setText(String.valueOf(dieRoll));
 		repaint();
 	}
@@ -146,8 +168,11 @@ public class GameControlPanel extends JPanel {
 	}
 	
 	//Set a guess result in the text field
-	public void setGuessResult(String guessResult) {
+	public void setGuessResult(String guessResult, Color color) {
 		theGuessResult.setText(guessResult);
+		//theGuessResult.setBackground(color);
+		Border border = BorderFactory.createLineBorder(color, 5);
+		theGuessResult.setBorder(border);
 		repaint();
 	}
 	

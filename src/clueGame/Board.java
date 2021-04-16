@@ -33,8 +33,12 @@ public class Board extends JPanel {
 	private int offset;
 	private int cellWidth;
 	private int cellHeight;
-	
-	
+	private Solution latestGuess;
+	private Card latestDisprove;
+	private CardsDisplayPanel cdPanel;
+	private GameControlPanel gcPanel;
+
+
 	//Board constructor
 	private Board() {
 		super();
@@ -42,6 +46,14 @@ public class Board extends JPanel {
 		addMouseListener(new BoardListener());
 	}
 	
+	public CardsDisplayPanel getCdPanel() {
+		return cdPanel;
+	}
+
+	public void setCdPanel(CardsDisplayPanel cdPanel) {
+		this.cdPanel = cdPanel;
+	}
+
 	//Return the Singleton Pattern instance of the game board and create it if it does not already exist
 	public static Board getInstance() {
 		if (theInstance == null) {
@@ -50,6 +62,10 @@ public class Board extends JPanel {
 		return theInstance;
 	}
 	
+	public Solution getLatestGuess() {
+		return latestGuess;
+	}
+
 	//Initialize the game board
 	public void initialize() {
 		//Create new data structures for the instance variables
@@ -231,6 +247,7 @@ public class Board extends JPanel {
 				Card card = theDeck.get(randNum);
 				theDeck.remove(card);
 				playerList.get(i).updateHand(card);
+				card.setCardHolder(playerList.get(i));
 				i++;
 			}
 		}
@@ -356,6 +373,7 @@ public class Board extends JPanel {
 	public void calcTargets(BoardCell startCell, int pathlength) {
 		visited.clear();
 		targets.clear();
+		
 		visited.add(startCell);
 		//recursive call for going through die roll size
 		findAllTargets(startCell, pathlength);
@@ -438,12 +456,12 @@ public class Board extends JPanel {
 	}
 
 	//check a suggestion and have players disprove it
-	public Card processSuggestion(Player[] players, int accuserIndex, Solution suggestion) {
+	public Card processSuggestion(ArrayList<Player> players, int accuserIndex, Solution suggestion) {
 		int index = accuserIndex;
 		while(true) {
 			index++;
 			//if end of players go to start of list, as we may start later into it
-			if(index == players.length) {
+			if(index == players.size()) {
 				index = 0;
 			}
 			//If we loop back through all players without returning, return null
@@ -451,7 +469,7 @@ public class Board extends JPanel {
 				return null;
 			}
 			//have each player try to disprove, and return the first one we get
-			Card card = players[index].disproveSuggestion(suggestion);
+			Card card = players.get(index).disproveSuggestion(suggestion);
 			if (card != null) {
 				return card;
 			}
@@ -495,50 +513,7 @@ public class Board extends JPanel {
 		}
 	}
 	
-	//Getter for the room object from char
-	public Room getRoom(char icon) {
-		return roomMap.get(icon);
-	}
 	
-	//Getter for the room object from cell
-	public Room getRoom(BoardCell cell) {
-		return roomMap.get(cell.getInitial());
-	}
-	
-	public Set<BoardCell> getAdjList(int x, int y) {
-		return this.getCell(x,y).getAdjList();
-	}
-	
-	//Getter for targets
-	public Set<BoardCell> getTargets() {
-		return targets;
-	}
-	
-	//Getter for a specific cell within the board
-	public BoardCell getCell(int row, int col) {
-		return grid[row][col];
-	}
-
-	//Getter for the number of rows
-	public int getNumRows() {
-		return numRows;
-	}
-
-	//Setter for the number of rows
-	public void setNumRows(int numRows) {
-		this.numRows = numRows;
-	}
-
-	//Getter for the number of columns
-	public int getNumColumns() {
-		return numColumns;
-	}
-
-	//Setter for the number of columns
-	public void setNumColumns(int numColumns) {
-		this.numColumns = numColumns;
-	}
-
 	public void handleNext() {
 		if (!isTurnFinished) {
 			JOptionPane popup = new JOptionPane();
@@ -546,8 +521,18 @@ public class Board extends JPanel {
 		} else {
 			//pushes to next player in rotation and starts next turn functions
 			isTurnFinished = false;
+			currentPlayer.setHasMovedThisTurn(false);
 			updatePlayer();
 			doNextTurn(currentPlayer instanceof HumanPlayer); //passes boolean on whether or not current player is a human player
+		}
+	}
+	
+	public void handleHumanPlayerAccusation() {
+		if (currentPlayer instanceof HumanPlayer && !currentPlayer.isHasMovedThisTurn()) {
+			SuggestionOptionsFrame accusation = new SuggestionOptionsFrame(Board.getInstance(), GameActionType.ACCUSATION);
+		} else {
+			JOptionPane popup = new JOptionPane();
+			popup.showMessageDialog(this, "You may only make an accusation at the start of your turn.");
 		}
 	}
 	
@@ -584,6 +569,12 @@ public class Board extends JPanel {
 				cell.setIsTarget(true);
 			}
 			
+			//Add the current cell to the list of targets if the player was just moved to a room outside of their turn
+			if(currentPlayer.isJustMoved()) {
+				targets.add(getCell(currentPlayer.getRow(), currentPlayer.getColumn()));
+				currentPlayer.setJustMoved(false);
+			}
+			
 			if(targets.size() == 0) {
 				//Make a pop-up pane with a display message stating that there are no targets
 				JOptionPane noTargetsPopup = new JOptionPane();
@@ -593,13 +584,66 @@ public class Board extends JPanel {
 			
 		//Else run computer turn
 		} else {
-			//TODO make accusation here
+			//Make accusation here if the computer player has found the solution
+			Solution possibleAccusation = currentPlayer.canAccuse(playerDeck, roomDeck, weaponDeck);
+			if(possibleAccusation != null) {
+				endGame(checkAccusation(possibleAccusation));
+			}
+			
+			//Have the computer player automatically select a target and move there.
 			BoardCell target = currentPlayer.findTarget(currentRoll, roomDeck);
 			currentPlayer.move(target.getRow(), target.getColumn());
-			//TODO make suggestion here
+			
+			//Only return a latest guess and disprove if the computer player is able to make a suggestion.
+			latestGuess = null;
+			latestDisprove = null;
+			//Check if the current player is in a room
+			if(getCell(currentPlayer.getRow(), currentPlayer.getColumn()).isRoomCenter()) {
+				//Mark that the player has just visited this room so that they will move elsewhere
+				currentPlayer.setLastRoomVisited(getRoom(getCell(currentPlayer.getRow(), currentPlayer.getColumn())));
+				
+				latestGuess = currentPlayer.createSuggestion(playerDeck, roomDeck, weaponDeck);
+				//Find the player that made the suggestion and move them to the room of the suggestion
+				for (Player player: playerList) {
+					if (latestGuess.getPerson().getCardName().equals(player.getName())) {
+						player.setJustMoved(true);
+						player.move(currentPlayer.getRow(), currentPlayer.getColumn());
+						
+					}
+				}
+				latestDisprove = processSuggestion(playerList, currentPlayerIndex, latestGuess);
+			}
+			if(latestDisprove != null) {
+				currentPlayer.updateSeen(latestDisprove);
+				if(currentPlayer instanceof HumanPlayer) {
+					cdPanel.updateSeen(latestDisprove);
+				}
+			}
+			
 			isTurnFinished = true;
 		}
 		repaint();
+	}
+	
+	public void handleHumanPlayerSuggestion(Solution suggestion) {
+		repaint();
+		Card result = processSuggestion(playerList, currentPlayerIndex, suggestion);
+		gcPanel.setGuess(suggestion.toString());
+		for (Player player: playerList) {
+			if (player == currentPlayer) continue;
+			if (suggestion.getPerson().getCardName().equals(player.getName())) {
+				player.move(currentPlayer.getRow(), currentPlayer.getColumn());
+				player.setJustMoved(true);
+			}
+		}
+		if(result != null) {
+			currentPlayer.updateSeen(result);
+			cdPanel.updateHumanSeenLists(currentPlayer);
+			gcPanel.setGuessResult(result.getCardHolder().getName() + " showed you \"" + result.getCardName() + "\"", result.getCardHolder().getColor());
+		} else {
+			gcPanel.setGuessResult("No one could disprove you. . .", Color.white);
+		}
+		isTurnFinished = true;
 	}
 
 	private class BoardListener implements MouseListener {
@@ -609,20 +653,24 @@ public class Board extends JPanel {
 					if (cell.containsClick(event.getX(), event.getY())) {
 						if(cell.isTarget) {
 							currentPlayer.move(cell.getRow(), cell.getColumn());
+							currentPlayer.setHasMovedThisTurn(true);
 							isTurnFinished = true;
 						} else if (cell.isPartOfRoom && getRoom(cell).getCenterCell().isTarget){
 							currentPlayer.move(getRoom(cell).getCenterCell().getRow(), getRoom(cell).getCenterCell().getColumn());
-							//TODO Make suggestion here
-							isTurnFinished = true;
+							currentPlayer.setHasMovedThisTurn(true);
 						} else {
-							//Make a pop-up pane with an error display message
+							//Make a pop-up pane with an error display message depending on whether the player has moved or not yet
 							JOptionPane popup = new JOptionPane();
-							popup.showMessageDialog(Board.getInstance(),"Invalid click, please wait for your turn or select a cyan target.");
+							if(!currentPlayer.isHasMovedThisTurn() && currentPlayer instanceof HumanPlayer) {
+								popup.showMessageDialog(Board.getInstance(),"Invalid click, please select a cyan target.");
+							} else {
+								popup.showMessageDialog(Board.getInstance(),"Invalid click, please wait for your next movement turn.");
+							}
 						}
 					}
 				}
 			}
-			if(isTurnFinished) {
+			if(currentPlayer.isHasMovedThisTurn()) {
 				clearAllTargets();
 			}
 		}
@@ -664,4 +712,71 @@ public class Board extends JPanel {
 		return currentRoll;
 	}
 	
+	public Card getLatestDisprove() {
+		return latestDisprove;
+	}
+	
+	//Getter for the room object from char
+	public Room getRoom(char icon) {
+		return roomMap.get(icon);
+	}
+	
+	//Getter for the room object from cell
+	public Room getRoom(BoardCell cell) {
+		return roomMap.get(cell.getInitial());
+	}
+	
+	//Getter for the list of adjacencies for a BoardCell
+	public Set<BoardCell> getAdjList(int x, int y) {
+		return this.getCell(x,y).getAdjList();
+	}
+	
+	//Getter for targets
+	public Set<BoardCell> getTargets() {
+		return targets;
+	}
+	
+	//Getter for a specific cell within the board
+	public BoardCell getCell(int row, int col) {
+		return grid[row][col];
+	}
+
+	//Getter for the number of rows
+	public int getNumRows() {
+		return numRows;
+	}
+
+	//Setter for the number of rows
+	public void setNumRows(int numRows) {
+		this.numRows = numRows;
+	}
+
+	//Getter for the number of columns
+	public int getNumColumns() {
+		return numColumns;
+	}
+
+	//Setter for the number of columns
+	public void setNumColumns(int numColumns) {
+		this.numColumns = numColumns;
+	}
+	
+	public GameControlPanel getGcPanel() {
+		return gcPanel;
+	}
+
+	public void setGcPanel(GameControlPanel gcPanel) {
+		this.gcPanel = gcPanel;
+	}
+	
+	public void endGame(boolean isCorrectAccusation) {
+		JOptionPane popup = new JOptionPane();
+		if(isCorrectAccusation) {
+			popup.showMessageDialog(this, currentPlayer.getName() + " has accused \"" + theAnswer.toString() + "\" \n " + currentPlayer.getName() + " Wins!");
+		} else {
+			popup.showMessageDialog(this, "Correct answer was: " + theAnswer.toString() + " \n " + currentPlayer.getName() + " guessed wrong! \n Game Over!");
+		}
+		System.exit(0);
+	}
+
 }

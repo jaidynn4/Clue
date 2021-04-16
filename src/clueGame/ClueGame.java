@@ -18,6 +18,8 @@ public class ClueGame extends JFrame {
 		bPanel = Board.getInstance();
 		bPanel.setConfigFiles("ClueLayout.csv", "ClueSetup.txt");
 		bPanel.initialize();
+		bPanel.setCdPanel(cdPanel);
+		bPanel.setGcPanel(gcPanel);
 		
 		//Add the panels to the JFrame
 		add(gcPanel, BorderLayout.SOUTH);
@@ -36,17 +38,8 @@ public class ClueGame extends JFrame {
 		
 		ClueGame frame = new ClueGame();						//Create the frame
 		
-		frame.gcPanel.setGuess("I have no guess!");
-		frame.gcPanel.setGuessResult("So you have nothing?");
-		
-		//Testing functionality of updatePanel() method in CardStatusPanel class
-		frame.cdPanel.getWeaponsPanel().getHandPanel().updatePanel("Blaster", Color.white);
-		frame.cdPanel.getWeaponsPanel().getSeenPanel().updatePanel("Lightsaber", Color.red);
-		frame.cdPanel.getWeaponsPanel().getHandPanel().updatePanel("Hydrospanner", Color.white);
-		frame.cdPanel.getWeaponsPanel().getSeenPanel().updatePanel("Thermal Detonator", Color.magenta);
-		frame.cdPanel.getPeoplePanel().getSeenPanel().updatePanel("Admiral Thrawn", Color.yellow);
-		frame.cdPanel.getPeoplePanel().getSeenPanel().updatePanel("Grand Moff Tarkin", Color.blue);
-		frame.cdPanel.getPeoplePanel().getSeenPanel().updatePanel("Emperor Palpatine", Color.yellow);
+		frame.gcPanel.setGuess("No guess made this turn.");
+		frame.gcPanel.setGuessResult("None.", Color.white);
 		
 		//Get the list of players
 		ArrayList<Player> playerList = frame.bPanel.getPlayerList();
@@ -62,14 +55,10 @@ public class ClueGame extends JFrame {
 		
 		//Start first turn with player 0, and set isHumanPlayer to true
 		Board.getInstance().setCurrentPlayer(playerList.get(0));
+		frame.cdPanel.populateHand(playerList.get(0));
 		Board.getInstance().doNextTurn(true);
 		
 		frame.gcPanel.setTurn(playerList.get(Board.getInstance().getCurrentPlayerIndex()), Board.getInstance().getCurrentRoll());
-
-		
-		
-		
-		
 	}
 
 	public GameControlPanel getGcPanel() {

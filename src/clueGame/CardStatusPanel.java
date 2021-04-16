@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
@@ -36,6 +37,7 @@ public class CardStatusPanel extends JPanel {
 		
 		//Add a text box stating "None" as a placeholder until cards are added
 		defaultText = new JTextField("None");
+		defaultText.setEditable(false);
 		add(defaultText);
 	}
 	
@@ -50,8 +52,35 @@ public class CardStatusPanel extends JPanel {
 		}
 		//Add the new card to the panel
 		JTextField card = new JTextField(name);
-		card.setBackground(color);
+		Border border = BorderFactory.createLineBorder(color, 5);
+		card.setBorder(border);
+		card.setEditable(false);
 		add(card);
 		updateUI();
+	}
+	
+	public void updateHuman(Player player, CardType type) {
+		if(!isEmpty) {
+			this.removeAll();
+			JLabel nameLabel = new JLabel();
+			nameLabel.setText("Seen:");
+			add(nameLabel);
+		}
+		for(Card card: player.getSeen()) {
+			if(card.getCardType() == type) {
+				if(isEmpty) {
+					remove(defaultText);
+					isEmpty = false;
+				}
+				
+				//Add the new card to the panel
+				JTextField cardName = new JTextField(card.getCardName());
+				Border border = BorderFactory.createLineBorder(card.getCardHolder().getColor(), 5);
+				cardName.setBorder(border);
+				cardName.setEditable(false);
+				add(cardName);
+				updateUI();
+			}
+		}
 	}
 }

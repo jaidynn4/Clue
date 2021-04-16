@@ -76,6 +76,13 @@ public class Room {
 	public BoardCell getLabelCell() {
 		return labelCell;
 	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+	
+	
 }
 
 

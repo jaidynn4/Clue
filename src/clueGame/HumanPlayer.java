@@ -1,7 +1,12 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
+import javax.swing.JComboBox;
+
 
 public class HumanPlayer extends Player {
 
@@ -28,4 +33,16 @@ public class HumanPlayer extends Player {
 		//TODO method stub
 		return null;
 	}
+
+	@Override
+	public Solution createSuggestion(ArrayList<Card> playerDeck, ArrayList<Card> roomDeck, ArrayList<Card> weaponDeck) {
+		return null;
+	}
+	
+	@Override
+	public Solution canAccuse(ArrayList<Card> playerDeck, ArrayList<Card> roomDeck, ArrayList<Card> weaponDeck) {
+		// unused stub to satisfy abstract method, this is only truly used by computer player
+		return null;
+	}
+	
 }

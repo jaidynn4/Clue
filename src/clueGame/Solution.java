@@ -41,4 +41,9 @@ public class Solution {
 		return true;
 	}
 	
+	@Override
+	public String toString() {
+		return person.getCardName() + " in the " + room.getCardName() + " with the " + weapon.getCardName() + "?";
+	}
+	
 }

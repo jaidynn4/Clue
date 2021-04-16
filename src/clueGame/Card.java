@@ -3,6 +3,7 @@ package clueGame;
 public class Card {
 	private String cardName;
 	private CardType cardType;
+	private Player cardHolder;
 	
 	//Default constructor takes a name for the card
 	public Card(CardType cardType, String cardName) {
@@ -22,8 +23,25 @@ public class Card {
 		return cardType;
 	}
 
+	//Getter for cardHolder
+	public Player getCardHolder() {
+		return cardHolder;
+	}
+
+	//Setter for cardHolder
+	public void setCardHolder(Player cardHolder) {
+		this.cardHolder = cardHolder;
+	}
+
 	//Getter for CardName
 	public String getCardName() {
 		return cardName;
 	}
+
+	@Override
+	public String toString() {
+		return cardName;
+	}
+	
+	
 }

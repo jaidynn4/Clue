@@ -5,14 +5,16 @@ import java.awt.Graphics;
 import java.util.*;
 
 public abstract class Player {
+	protected String name;						//The player character's name
+	protected Color color;						//The color used to represent the player
+	protected int row;							//The current row number that the player is on
+	protected int column;						//The current column number that the player is on
+	protected Set<Card> hand;					//The player's hand of cards
+	protected Set<Card> seen;					//Cards that the player has seen
+	protected boolean wasMoved = false;			//Tracks if the player was moved to a room since their last turn
+	protected Room lastRoomVisited;				//Tracks the last room that the player made a suggestion in so they will opt to move elsewhere
+	protected boolean hasMovedThisTurn = false;	//Tracks if the player has moved yet on their turn
 	
-	private String name;			//The player character's name
-	private Color color;			//The color used to represent the player
-	protected int row;				//The current row number that the player is on
-	protected int column;			//The current column number that the player is on
-	protected Set<Card> hand;		//The player's hand of cards
-	protected Set<Card> seen;		//Cards that the player has seen
-
 	//Default constructor takes in name, color, row, and column
 	public Player(String name, Color color, int row, int column) {
 		super();
@@ -22,6 +24,11 @@ public abstract class Player {
 		this.column = column;
 		hand = new HashSet<Card>();
 		seen = new HashSet<Card>();
+		
+		//Instantiate a dummy value for the last room visited that will never equal any of the room cells on the board
+		//This will be overwritten and used later to improve computer movement AI logic
+		this.lastRoomVisited = new Room("Null", true);
+		this.lastRoomVisited.setCenterCell(new BoardCell(-1, -1));
 	}
 	
 	//Abstract method used to update the player's hand
@@ -33,11 +40,21 @@ public abstract class Player {
 	//Abstract method used to get the target cell for player movement
 	public abstract BoardCell findTarget(int pathlength, ArrayList<Card> roomDeck);
 	
+	//Abstract method used to determine if the player can make an accusation
+	public abstract Solution canAccuse(ArrayList<Card> playerDeck, ArrayList<Card> roomDeck, ArrayList<Card> weaponDeck);
+	
 	//Getter for hand
 	public Set<Card> getHand() {
 		return hand;
 	}
+	
+	//getter for seen
+	public Set<Card> getSeen() {
+		return seen;
+	}
 
+	public abstract Solution createSuggestion(ArrayList<Card> playerDeck, ArrayList<Card> roomDeck, ArrayList<Card> weaponDeck);
+	
 	public Card disproveSuggestion(Solution suggestion) {
 		Card[] cards = new Card[3];
 		cards[0] = suggestion.getPerson();
@@ -76,7 +93,6 @@ public abstract class Player {
 		g.fillOval(cellWidth*column+(offset*numOffset), cellHeight*row+offset, cellWidth, cellHeight);
 		g.setColor(Color.BLACK);
 		g.drawOval(cellWidth*column+(offset*numOffset), cellHeight*row+offset, cellWidth, cellHeight);
-		System.out.println(numOffset);
 	}
 	
 	public void move(int row, int column) {
@@ -84,6 +100,12 @@ public abstract class Player {
 		setRow(row);
 		setColumn(column);
 		Board.getInstance().getCell(this.row, this.column).setOccupied(true);
+		
+		if(this instanceof HumanPlayer && !wasMoved) {
+			if (Board.getInstance().getCell(row, column).isRoomCenter()) {
+				SuggestionOptionsFrame sFrame = new SuggestionOptionsFrame(Board.getInstance(), GameActionType.SUGGESTION);
+			}
+		}
 	}
 	
 	//Getter for name
@@ -126,4 +148,25 @@ public abstract class Player {
 		this.column = column;
 	}
 
+	public boolean isJustMoved() {
+		return wasMoved;
+	}
+
+	public void setJustMoved(boolean wasJustMoved) {
+		this.wasMoved = wasJustMoved;
+	}
+
+	public void setLastRoomVisited(Room lastRoomVisited) {
+		this.lastRoomVisited = lastRoomVisited;
+	}
+
+	public boolean isHasMovedThisTurn() {
+		return hasMovedThisTurn;
+	}
+
+	public void setHasMovedThisTurn(boolean hasMovedThisTurn) {
+		this.hasMovedThisTurn = hasMovedThisTurn;
+	}
+	
+	
 }
