@@ -616,9 +616,6 @@ public class Board extends JPanel {
 			}
 			if(latestDisprove != null) {
 				currentPlayer.updateSeen(latestDisprove);
-				if(currentPlayer instanceof HumanPlayer) {
-					cdPanel.updateSeen(latestDisprove);
-				}
 			}
 			
 			isTurnFinished = true;
@@ -626,6 +623,7 @@ public class Board extends JPanel {
 		repaint();
 	}
 	
+	//
 	public void handleHumanPlayerSuggestion(Solution suggestion) {
 		repaint();
 		Card result = processSuggestion(playerList, currentPlayerIndex, suggestion);
@@ -638,8 +636,8 @@ public class Board extends JPanel {
 			}
 		}
 		if(result != null) {
+			cdPanel.updateSeenCards(result);
 			currentPlayer.updateSeen(result);
-			cdPanel.updateHumanSeenLists(currentPlayer);
 			gcPanel.setGuessResult(result.getCardHolder().getName() + " showed you \"" + result.getCardName() + "\"", result.getCardHolder().getColor());
 		} else {
 			gcPanel.setGuessResult("No one could disprove you. . .", Color.white);
@@ -762,10 +760,12 @@ public class Board extends JPanel {
 		this.numColumns = numColumns;
 	}
 	
+	//Getter for the game control panel
 	public GameControlPanel getGcPanel() {
 		return gcPanel;
 	}
 
+	//Setter for the game control panel
 	public void setGcPanel(GameControlPanel gcPanel) {
 		this.gcPanel = gcPanel;
 	}

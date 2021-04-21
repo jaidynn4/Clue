@@ -47,10 +47,10 @@ public class MenuFrame extends JFrame{
 		map = createMapMenu();
 		panel.add(map);
 		
-		JLabel characterLabel = new JLabel("Choose your character:");
-		panel.add(characterLabel);
-		character = createCharacterMenu();
-		panel.add(character);
+//		JLabel characterLabel = new JLabel("Choose your character:");
+//		panel.add(characterLabel);
+//		character = createCharacterMenu();
+//		panel.add(character);
 
 		return panel;
 	}

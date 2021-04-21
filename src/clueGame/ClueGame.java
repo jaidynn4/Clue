@@ -21,14 +21,17 @@ public class ClueGame extends JFrame {
 		this.layoutConfigFile = layoutConfigFile;
 		this.setupConfigFile = setupConfigFile;
 		
-		gcPanel = new GameControlPanel();
-		cdPanel = new CardsDisplayPanel();
-		bPanel = Board.getInstance();
 		
+		
+		bPanel = Board.getInstance();
 		bPanel.setConfigFiles(layoutConfigFile, setupConfigFile);
 		bPanel.initialize();
-		bPanel.setCdPanel(cdPanel);
+		
+		gcPanel = new GameControlPanel();
 		bPanel.setGcPanel(gcPanel);
+		
+		cdPanel = new CardsDisplayPanel();
+		bPanel.setCdPanel(cdPanel);
 		
 		gcPanel.setGuess("No guess made this turn.");
 		gcPanel.setGuessResult("None.", Color.white);
@@ -69,7 +72,6 @@ public class ClueGame extends JFrame {
 		}
 		//Start first turn with player 0, and set isHumanPlayer to true
 		Board.getInstance().setCurrentPlayer(playerList.get(0));
-		cdPanel.populateHand(playerList.get(0));
 		Board.getInstance().doNextTurn(true);
 		
 		gcPanel.setTurn(playerList.get(Board.getInstance().getCurrentPlayerIndex()), Board.getInstance().getCurrentRoll());

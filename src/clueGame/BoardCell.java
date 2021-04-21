@@ -1,7 +1,6 @@
 package clueGame;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -115,6 +114,16 @@ public class BoardCell {
 				g.setColor(Color.LIGHT_GRAY);
 			}
 			g.fillRect(x, y, cellWidth, cellHeight);
+			
+			//Check if cell is a secret passage
+			if (secretPassage != '!') {
+				g.setColor(Color.BLACK);
+				g.drawLine(x + (cellWidth / 10), y + (cellHeight / 10), x + (cellWidth / 10), y + (9 * cellHeight / 10));
+				g.drawLine(x + (4 * cellWidth / 10), y + (cellHeight / 10), x + (4 * cellWidth / 10), y + (9 * cellHeight / 10));
+				g.drawLine(x + (cellWidth / 10), y + (cellHeight / 3), x + (4 * cellWidth / 10), y + (cellHeight / 3));
+				g.drawLine(x + (cellWidth / 10), y + (2 * cellHeight / 3), x + (4 * cellWidth / 10), y + (2 * cellHeight / 3));
+			}
+			
 		} else if (initial =='X') {
 			//unused spaces are just black
 			g.setColor(Color.BLACK);
