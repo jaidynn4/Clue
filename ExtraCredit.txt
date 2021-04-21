@@ -1,5 +1,5 @@
 The following are the changes we made for extra credit:
 
 - We added a start menu with a JComboBox that lets you select between 2 maps and could easily be adapted to add more map options.
-- We added setup and layout files for a second map with a larger number of players, rooms, and weapons.
+- We added setup and layout files for a second map (the Ebon Hawk) with a larger number of players, rooms, and weapons.
 - We drew cool ladders to represent the secret passages.

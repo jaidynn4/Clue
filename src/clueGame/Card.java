@@ -1,9 +1,9 @@
 package clueGame;
 
 public class Card {
-	private String cardName;
-	private CardType cardType;
-	private Player cardHolder;
+	private String cardName;		//The name of the card
+	private CardType cardType;		//Enum for the type of card: person, room, or weapon
+	private Player cardHolder;		//The player whose hand contains this card
 	
 	//Default constructor takes a name for the card
 	public Card(CardType cardType, String cardName) {
@@ -12,12 +12,12 @@ public class Card {
 		this.cardName = cardName;
 	}
 
-	//We aren't sure why this method is needed yet. . . but it was in the UML diagram for the assignment so here it is.
-	public boolean equals(Card target) {
-		//TODO method stub
-		return true;
+	//A toString function returns the name of the card
+	@Override
+	public String toString() {
+		return cardName;
 	}
-
+	
 	//Getter for cardType
 	public CardType getCardType() {
 		return cardType;
@@ -38,10 +38,4 @@ public class Card {
 		return cardName;
 	}
 
-	@Override
-	public String toString() {
-		return cardName;
-	}
-	
-	
 }

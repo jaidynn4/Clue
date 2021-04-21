@@ -13,16 +13,14 @@ public class ClueGame extends JFrame {
 	private GameControlPanel gcPanel;		//Game Control Panel GUI
 	private CardsDisplayPanel cdPanel;		//Cards Display Panel GUI
 	private Board bPanel;					//Board GUI
-	private String setupConfigFile;			//
-	private String layoutConfigFile;
+	private String setupConfigFile;			//The name of the setup file
+	private String layoutConfigFile;		//The name of the layout file
 	
 	public ClueGame(String layoutConfigFile, String setupConfigFile) {
-		//Create the panels, ensuring that the Singleton board panel is initialized
 		this.layoutConfigFile = layoutConfigFile;
 		this.setupConfigFile = setupConfigFile;
 		
-		
-		
+		//Create the panels, ensuring that the Singleton board panel is initialized
 		bPanel = Board.getInstance();
 		bPanel.setConfigFiles(layoutConfigFile, setupConfigFile);
 		bPanel.initialize();
@@ -33,6 +31,7 @@ public class ClueGame extends JFrame {
 		cdPanel = new CardsDisplayPanel();
 		bPanel.setCdPanel(cdPanel);
 		
+		//Set default values for the game control panel guess displays
 		gcPanel.setGuess("No guess made this turn.");
 		gcPanel.setGuessResult("None.", Color.white);
 		
@@ -49,6 +48,7 @@ public class ClueGame extends JFrame {
 		setVisible(true); 								//Make it visible
 	}
 	
+	//Runs the game, is called when the MenuFrame submit button is pressed
 	public void run() {
 		//Get the list of players
 		ArrayList<Player> playerList = bPanel.getPlayerList();
@@ -56,27 +56,25 @@ public class ClueGame extends JFrame {
 		//Get the name of the first human player in the player map
 		String humanPlayerName = playerList.get(0).getName();
 		
-		//Make a pop-up pane for a welcome message
-		JOptionPane popup = new JOptionPane();
-		
 		//Display pop-up with a welcome message corresponding to the chosen map
 		if(layoutConfigFile.equals("ClueLayoutEbonHawk.csv") && setupConfigFile.equals("ClueSetupEbonHawk.txt")) {
-			popup.showMessageDialog(this, "You are playing as " + humanPlayerName + ". \nThere has been a murder aboard the Ebon Hawk! \n"
+			JOptionPane.showMessageDialog(this, "You are playing as " + humanPlayerName + ". \nThere has been a murder aboard the Ebon Hawk! \n"
 										+ "Kreia has tragically (maybe) been found dead. \nWhich of your fellow crew members could be responsible? "
 										+ "\nYou must solve this mystery before it's TOO LATE!");
 		} else {
-			popup.showMessageDialog(this,"You are playing as " + humanPlayerName + ". \nThere has been a murder aboard the ISD Executor! \n"
+			JOptionPane.showMessageDialog(this,"You are playing as " + humanPlayerName + ". \nThere has been a murder aboard the ISD Executor! \n"
 										+ "Random Stormtrooper #6953 has tragically been found dead. \nYou and your fellow officials "
 										+ "are all potentially capable of murder. . . and you yourself could be the next victim."
 										+ " \nYou must solve this mystery before it's TOO LATE!");
 		}
+		
 		//Start first turn with player 0, and set isHumanPlayer to true
 		Board.getInstance().setCurrentPlayer(playerList.get(0));
 		Board.getInstance().doNextTurn(true);
-		
 		gcPanel.setTurn(playerList.get(Board.getInstance().getCurrentPlayerIndex()), Board.getInstance().getCurrentRoll());
 	}
 	
+	//Getter for the game control panel
 	public GameControlPanel getGcPanel() {
 		return gcPanel;
 	}

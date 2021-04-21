@@ -15,12 +15,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 
 public class GameControlPanel extends JPanel {
-	private JTextField theName;
-	private JTextField theRoll;
+	private JTextField theName;			//Text field displaying the current player name
+	private JTextField theRoll;			//Text field displaying the die roll result
 	private JTextField theGuess;		//Text field displaying guess
 	private JTextField theGuessResult;	//Text field displaying guess result
 	
-	
+	//Creates a panel with 4 sections, display turn and roll, place buttons for next/accuse, and display guess info
 	public GameControlPanel() {
 		setSize(800, 180);
 		setLayout(new GridLayout(2,0));
@@ -58,15 +58,20 @@ public class GameControlPanel extends JPanel {
 		return topPanel;
 	}
 	
+	//Waits for the next button to be pushed. Updates panel with next turn info or throws a popup error if turn isnt over
 	class NextListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			Board theBoard = Board.getInstance();
+			//will reject entire process and give a popup if turn isnt over
+			//All below will remain same as before and player will still need to move
 			theBoard.handleNext();
+			//update turn and roll displays based on results from board
 			setTurn(theBoard.getCurrentPlayer(), theBoard.getCurrentRoll());
 			if(theBoard.getLatestGuess() == null) {
 				setGuess("No guess made this turn.");
 				setGuessResult("None.", Color.white);
 			} else {
+				//returns the display for whether or not the guess someone made is disproven
 				setGuess(theBoard.getLatestGuess().toString());
 				setGuessResult("Not Disproven. . .", Color.white);
 				if(theBoard.getLatestDisprove() != null) {
@@ -79,7 +84,7 @@ public class GameControlPanel extends JPanel {
 		}
 	}
 	
-	
+	//When accuse button is hit and submitted this checks if the player is correct or not.
 	class AccusationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			Board theBoard = Board.getInstance();

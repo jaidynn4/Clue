@@ -42,6 +42,13 @@ public class Room {
 		}
 	}
 	
+	//A toString function returns the name of the room
+	@Override
+	public String toString() {
+		return name;
+	}
+		
+	
 	//Getter for isRoom
 	public Boolean getIsRoom() {
 		return isRoom;
@@ -77,12 +84,6 @@ public class Room {
 		return labelCell;
 	}
 
-	@Override
-	public String toString() {
-		return name;
-	}
-	
-	
 }
 
 

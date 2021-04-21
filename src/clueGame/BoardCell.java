@@ -115,7 +115,7 @@ public class BoardCell {
 			}
 			g.fillRect(x, y, cellWidth, cellHeight);
 			
-			//Check if cell is a secret passage
+			//Check if cell is a secret passage and draw a ladder there if it is
 			if (secretPassage != '!') {
 				g.setColor(Color.BLACK);
 				g.drawLine(x + (cellWidth / 10), y + (cellHeight / 10), x + (cellWidth / 10), y + (9 * cellHeight / 10));

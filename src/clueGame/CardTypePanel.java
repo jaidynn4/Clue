@@ -80,8 +80,7 @@ public class CardTypePanel extends JPanel {
 		
 	}
 		
-	//Passes in card name and color (default is white) to add a card to the panel
-	//Color represents the color of the player who showed a card to the human player
+	//Passes in card to add a card to the panel
 	public void updatePanel(Card card) {
 		Player human = Board.getInstance().getPlayerList().get(0);
 		if(!human.getSeen().contains(card)) {

@@ -69,6 +69,7 @@ public class ComputerPlayer extends Player {
 		return new Solution(playerCard, roomCard, weaponCard);
 	}
 	
+	//Logic for computer to find which cell to choose
 	@Override
 	public BoardCell findTarget(int pathlength, ArrayList<Card> roomDeck) {
 		//grab the board and calculate targets from player location for roll amount
@@ -111,6 +112,7 @@ public class ComputerPlayer extends Player {
 		return choices.get(randNum);
 	}
 	
+	//Logic for making sure accusation is perfect when it can be called, returns said perfect accusation to check
 	public Solution canAccuse(ArrayList<Card> playerDeck, ArrayList<Card> roomDeck, ArrayList<Card> weaponDeck) {
 		ArrayList<Card> unseenPlayers = new ArrayList<Card>();
 		ArrayList<Card> unseenRooms = new ArrayList<Card>();

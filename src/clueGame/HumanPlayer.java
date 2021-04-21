@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 
-
 public class HumanPlayer extends Player {
 
 	//Default constructor
@@ -22,15 +21,15 @@ public class HumanPlayer extends Player {
 	}
 
 	//Add a card to the player's seen cards list
-	//TODO add more functionality
 	@Override
 	public void updateSeen(Card card) {
 		seen.add(card);
 	}
+
 	
+//Unused stubs to satisfy abstract method, this is only truly used by computer player
 	@Override
 	public BoardCell findTarget(int pathlength, ArrayList<Card> roomDeck) {
-		//TODO method stub
 		return null;
 	}
 
@@ -41,7 +40,6 @@ public class HumanPlayer extends Player {
 	
 	@Override
 	public Solution canAccuse(ArrayList<Card> playerDeck, ArrayList<Card> roomDeck, ArrayList<Card> weaponDeck) {
-		// unused stub to satisfy abstract method, this is only truly used by computer player
 		return null;
 	}
 	

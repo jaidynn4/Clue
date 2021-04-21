@@ -27,16 +27,16 @@ public class Board extends JPanel {
 	private Solution theAnswer;				//The Solution to the game
 	private boolean isTurnFinished = false;	//Flags whether the current player turn is finished, default to false
 	private static Board theInstance;		//The Singleton Pattern instance of the board class
-	private Player currentPlayer;
-	private int currentPlayerIndex = 0;
-	private int currentRoll;
-	private int offset;
-	private int cellWidth;
-	private int cellHeight;
-	private Solution latestGuess;
-	private Card latestDisprove;
-	private CardsDisplayPanel cdPanel;
-	private GameControlPanel gcPanel;
+	private Player currentPlayer;			//The player whose turn it is currently
+	private int currentPlayerIndex = 0;		//The index of currentPlayer
+	private int currentRoll;				//The die roll for the current player's turn
+	private int offset;						//A standard offset used in cell size calculations
+	private int cellWidth;					//Width of a boardCell
+	private int cellHeight;					//Height of a boardCell
+	private Solution latestGuess;			//The most recent suggestion
+	private Card latestDisprove;			//latest card for players to try to disprove
+	private CardsDisplayPanel cdPanel;		//Reference to card display panel so we can update cards on display
+	private GameControlPanel gcPanel;		//Reference to the game control panel so we can update displays
 
 
 	//Board constructor
@@ -45,14 +45,6 @@ public class Board extends JPanel {
 		setSize(620,620);
 		addMouseListener(new BoardListener());
 	}
-	
-	public CardsDisplayPanel getCdPanel() {
-		return cdPanel;
-	}
-
-	public void setCdPanel(CardsDisplayPanel cdPanel) {
-		this.cdPanel = cdPanel;
-	}
 
 	//Return the Singleton Pattern instance of the game board and create it if it does not already exist
 	public static Board getInstance() {
@@ -60,10 +52,6 @@ public class Board extends JPanel {
 			theInstance = new Board();
 		}
 		return theInstance;
-	}
-	
-	public Solution getLatestGuess() {
-		return latestGuess;
 	}
 
 	//Initialize the game board
@@ -91,18 +79,6 @@ public class Board extends JPanel {
 		}
 	}
 	
-	
-	public int getOffset() {
-		return offset;
-	}
-
-	public int getCellWidth() {
-		return cellWidth;
-	}
-
-	public int getCellHeight() {
-		return cellHeight;
-	}
 
 	//Load the Setup file
 	public void loadSetupConfig() throws BadConfigFormatException {
@@ -418,39 +394,6 @@ public class Board extends JPanel {
 		return null;
 	}
 	
-	//Getter for the playerMap
-	public ArrayList<Player> getPlayerList() {
-		return playerList;
-	}
-	
-	//Getter for theDeck
-	public ArrayList<Card> getTheDeck() {
-		return theDeck;
-	}
-	
-	//Getter for playerDeck
-	public ArrayList<Card> getPlayerDeck() {
-		return playerDeck;
-	}
-
-	//Getter for weaponDeck
-	public ArrayList<Card> getWeaponDeck() {
-		return weaponDeck;
-	}
-
-	//Getter for roomDeck
-	public ArrayList<Card> getRoomDeck() {
-		return roomDeck;
-	}
-
-	public Solution getTheAnswer() {
-		return theAnswer;
-	}
-	
-	public void setTheAnswer(Card person, Card room, Card weapon) {
-		this.theAnswer = new Solution(person, room, weapon);
-	}
-	
 	public boolean checkAccusation(Solution accusation) {
 		return theAnswer.equals(accusation);
 	}
@@ -514,6 +457,8 @@ public class Board extends JPanel {
 	}
 	
 	
+	//Called when the human player pushes the next button on the game control panel
+	//This moves the turn ahead and calls proper functions for moving the game
 	public void handleNext() {
 		if (!isTurnFinished) {
 			JOptionPane popup = new JOptionPane();
@@ -527,6 +472,7 @@ public class Board extends JPanel {
 		}
 	}
 	
+	//Called when human submits an accusation with the accusation button, checks if can do it and throws popup if not
 	public void handleHumanPlayerAccusation() {
 		if (currentPlayer instanceof HumanPlayer && !currentPlayer.isHasMovedThisTurn()) {
 			SuggestionOptionsFrame accusation = new SuggestionOptionsFrame(Board.getInstance(), GameActionType.ACCUSATION);
@@ -536,6 +482,7 @@ public class Board extends JPanel {
 		}
 	}
 	
+	//Sets player to next on index, reseting to 0 if reaching end of the list
 	public void updatePlayer() {
 		//grab index of current player and increase it by 1
 		currentPlayerIndex++;
@@ -548,12 +495,16 @@ public class Board extends JPanel {
 		currentPlayer = playerList.get(currentPlayerIndex);
 	}
 	
+	//random dice roll for each turn that is called and stored on board
 	public int rollDie() {
 		//randomly roll a single die 1-6
 		Random rand = new Random();
 		return rand.nextInt(6) + 1;
 	}
 	
+	
+	//logic for each turn. Handles populating targets for humans and calling functions for computer if not human.
+	//Also calls shared functions that both need.
 	public void doNextTurn(boolean isHuman) {
 		currentRoll = rollDie();
 		BoardCell playerCell = getCell(currentPlayer.row, currentPlayer.column);
@@ -623,7 +574,7 @@ public class Board extends JPanel {
 		repaint();
 	}
 	
-	//
+	//When player enterts a room and hits submit on suggestion, this is called. Sets panels and handles disproves.
 	public void handleHumanPlayerSuggestion(Solution suggestion) {
 		repaint();
 		Card result = processSuggestion(playerList, currentPlayerIndex, suggestion);
@@ -644,7 +595,8 @@ public class Board extends JPanel {
 		}
 		isTurnFinished = true;
 	}
-
+	
+	//called whenever the board is clicked. Checks if valid location, only target squares are allowed during player turn
 	private class BoardListener implements MouseListener {
 		public void mouseClicked(MouseEvent event) {
 			for(BoardCell[] cells: grid) {
@@ -669,6 +621,8 @@ public class Board extends JPanel {
 					}
 				}
 			}
+			//This makes sure the player has moved then clears target squares with another function
+			//to make sure they cant go more
 			if(currentPlayer.isHasMovedThisTurn()) {
 				clearAllTargets();
 			}
@@ -681,6 +635,7 @@ public class Board extends JPanel {
 		public void mouseExited(MouseEvent event) {}
 	}
 	
+	//empties target cells on board so nothing new can be clicked by player
 	public void clearAllTargets() {
 		for(BoardCell[] cells: grid) {
 			for(BoardCell cell: cells) {
@@ -689,6 +644,18 @@ public class Board extends JPanel {
 		}
 		repaint();
 	}
+	
+	//Ends the game. Changes display on popup depending on correctness before terminating the game
+	public void endGame(boolean isCorrectAccusation) {
+		JOptionPane popup = new JOptionPane();
+		if(isCorrectAccusation) {
+			popup.showMessageDialog(this, currentPlayer.getName() + " has accused \"" + theAnswer.toString() + "\" \n " + currentPlayer.getName() + " Wins!");
+		} else {
+			popup.showMessageDialog(this, "Correct answer was: " + theAnswer.toString() + " \n " + currentPlayer.getName() + " guessed wrong! \n Game Over!");
+		}
+		System.exit(0);
+	}
+
 	
 	public int getCurrentPlayerIndex() {
 		return currentPlayerIndex;
@@ -770,21 +737,69 @@ public class Board extends JPanel {
 		this.gcPanel = gcPanel;
 	}
 	
-	public void endGame(boolean isCorrectAccusation) {
-		JOptionPane popup = new JOptionPane();
-		if(isCorrectAccusation) {
-			popup.showMessageDialog(this, currentPlayer.getName() + " has accused \"" + theAnswer.toString() + "\" \n " + currentPlayer.getName() + " Wins!");
-		} else {
-			popup.showMessageDialog(this, "Correct answer was: " + theAnswer.toString() + " \n " + currentPlayer.getName() + " guessed wrong! \n Game Over!");
-		}
-		System.exit(0);
-	}
-
+	
 	public String getLayoutConfigFile() {
 		return this.layoutConfigFile;
 	}
 	
 	public String getSetupConfigFile() {
 		return this.setupConfigFile;
+	}
+	
+	//Getter for the playerMap
+	public ArrayList<Player> getPlayerList() {
+		return playerList;
+	}
+	
+	//Getter for theDeck
+	public ArrayList<Card> getTheDeck() {
+		return theDeck;
+	}
+	
+	//Getter for playerDeck
+	public ArrayList<Card> getPlayerDeck() {
+		return playerDeck;
+	}
+
+	//Getter for weaponDeck
+	public ArrayList<Card> getWeaponDeck() {
+		return weaponDeck;
+	}
+
+	//Getter for roomDeck
+	public ArrayList<Card> getRoomDeck() {
+		return roomDeck;
+	}
+
+	public Solution getTheAnswer() {
+		return theAnswer;
+	}
+	
+	public void setTheAnswer(Card person, Card room, Card weapon) {
+		this.theAnswer = new Solution(person, room, weapon);
+	}
+	
+	public int getOffset() {
+		return offset;
+	}
+
+	public int getCellWidth() {
+		return cellWidth;
+	}
+
+	public int getCellHeight() {
+		return cellHeight;
+	}
+	
+	public Solution getLatestGuess() {
+		return latestGuess;
+	}
+	
+	public CardsDisplayPanel getCdPanel() {
+		return cdPanel;
+	}
+
+	public void setCdPanel(CardsDisplayPanel cdPanel) {
+		this.cdPanel = cdPanel;
 	}
 }

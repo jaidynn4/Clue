@@ -1,9 +1,9 @@
 package clueGame;
 
 public class Solution {
-	private Card person;
-	private Card room;
-	private Card weapon;
+	private Card person;		//Person card
+	private Card room;			//Room card
+	private Card weapon;		//Weapon card
 	
 	//Default constructor takes in 3 cards
 	public Solution(Card person, Card room, Card weapon) {
@@ -13,6 +13,26 @@ public class Solution {
 		this.weapon = weapon;
 	}
 
+	//Getter for toString returns a sentence
+	@Override
+	public String toString() {
+		return person.getCardName() + " in the " + room.getCardName() + " with the " + weapon.getCardName() + "?";
+	}
+		
+	//Checks if the cards of 2 solutions are equal
+	public boolean equals(Solution solution2) {
+		if (this.person != solution2.person) {
+			return false;
+		}
+		if (this.room != solution2.room) {
+			return false;
+		}
+		if (this.weapon != solution2.weapon) {
+			return false;
+		}
+		return true;
+	}
+	
 	//Getter for person card
 	public Card getPerson() {
 		return person;
@@ -27,23 +47,5 @@ public class Solution {
 	public Card getWeapon() {
 		return weapon;
 	}
-	
-	public boolean equals(Solution solution2) {
-		if (this.person != solution2.person) {
-			return false;
-		}
-		if (this.room != solution2.room) {
-			return false;
-		}
-		if (this.weapon != solution2.weapon) {
-			return false;
-		}
-		return true;
-	}
-	
-	@Override
-	public String toString() {
-		return person.getCardName() + " in the " + room.getCardName() + " with the " + weapon.getCardName() + "?";
-	}
-	
+		
 }
