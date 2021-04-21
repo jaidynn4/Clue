@@ -16,14 +16,14 @@ Space, Walkway, W
 //Player Info
 Player, yellow, Bastila Shan, 11, 3
 Player, white, T3-M4, 18, 11
-Player, darkGray, Canderous Ordo, 24, 32
+Player, dark_gray, Canderous Ordo, 24, 32
 Player, pink, Juhani, 13, 23
 Player, red, HK-47, 40, 29
 Player, black, Revan, 19, 26
 Player, orange, Carth Onasi, 4, 15
 Player, green, Jolee Bindo, 28, 13
 Player, blue, Mission Vao, 12, 31
-Player, lightGray, Zaalbar, 23, 20
+Player, gray, Zaalbar, 23, 20
 //Weapon Info
 Weapon, Repeating Blaster
 Weapon, Disruptor Rifle

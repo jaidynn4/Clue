@@ -570,9 +570,10 @@ public class Board extends JPanel {
 			}
 			
 			//Add the current cell to the list of targets if the player was just moved to a room outside of their turn
-			if(currentPlayer.isJustMoved()) {
+			if(currentPlayer.isPulledToRoom()) {
 				targets.add(getCell(currentPlayer.getRow(), currentPlayer.getColumn()));
-				currentPlayer.setJustMoved(false);
+				playerCell.setIsTarget(true);
+				currentPlayer.setPulledToRoom(false);
 			}
 			
 			if(targets.size() == 0) {
@@ -606,7 +607,7 @@ public class Board extends JPanel {
 				//Find the player that made the suggestion and move them to the room of the suggestion
 				for (Player player: playerList) {
 					if (latestGuess.getPerson().getCardName().equals(player.getName())) {
-						player.setJustMoved(true);
+						player.setPulledToRoom(true);
 						player.move(currentPlayer.getRow(), currentPlayer.getColumn());
 						
 					}
@@ -633,7 +634,7 @@ public class Board extends JPanel {
 			if (player == currentPlayer) continue;
 			if (suggestion.getPerson().getCardName().equals(player.getName())) {
 				player.move(currentPlayer.getRow(), currentPlayer.getColumn());
-				player.setJustMoved(true);
+				player.setPulledToRoom(true);
 			}
 		}
 		if(result != null) {

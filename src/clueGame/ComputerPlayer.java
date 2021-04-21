@@ -77,9 +77,9 @@ public class ComputerPlayer extends Player {
 		Set<BoardCell> targets = board.getTargets();
 		
 		//Add the current cell to the list of targets if the player was just moved to a room outside of their turn
-		if(isJustMoved()) {
+		if(isPulledToRoom()) {
 			targets.add(board.getCell(row, column));
-			setJustMoved(false);
+			setPulledToRoom(false);
 		}
 		
 		//if targets is empty, stay in the current location

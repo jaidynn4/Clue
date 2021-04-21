@@ -11,7 +11,7 @@ public abstract class Player {
 	protected int column;						//The current column number that the player is on
 	protected Set<Card> hand;					//The player's hand of cards
 	protected Set<Card> seen;					//Cards that the player has seen
-	protected boolean wasMoved = false;			//Tracks if the player was moved to a room since their last turn
+	protected boolean wasPulledToRoom = false;			//Tracks if the player was moved to a room since their last turn
 	protected Room lastRoomVisited;				//Tracks the last room that the player made a suggestion in so they will opt to move elsewhere
 	protected boolean hasMovedThisTurn = false;	//Tracks if the player has moved yet on their turn
 	
@@ -101,7 +101,7 @@ public abstract class Player {
 		setColumn(column);
 		Board.getInstance().getCell(this.row, this.column).setOccupied(true);
 		
-		if(this instanceof HumanPlayer && !wasMoved) {
+		if(this instanceof HumanPlayer && !wasPulledToRoom) {
 			if (Board.getInstance().getCell(row, column).isRoomCenter()) {
 				SuggestionOptionsFrame sFrame = new SuggestionOptionsFrame(Board.getInstance(), GameActionType.SUGGESTION);
 			}
@@ -148,12 +148,12 @@ public abstract class Player {
 		this.column = column;
 	}
 
-	public boolean isJustMoved() {
-		return wasMoved;
+	public boolean isPulledToRoom() {
+		return wasPulledToRoom;
 	}
 
-	public void setJustMoved(boolean wasJustMoved) {
-		this.wasMoved = wasJustMoved;
+	public void setPulledToRoom(boolean wasPulledToRoom) {
+		this.wasPulledToRoom = wasPulledToRoom;
 	}
 
 	public void setLastRoomVisited(Room lastRoomVisited) {
